@@ -12,9 +12,11 @@ class JobSchemaDetection:
         self.excluded_attributes = ['baseSalary_minValue', 'baseSalary_maxValue', 'datePosted', 'validThrough']
         self.jobs = [flatten_dict(job) for job in jobs]
         #van anh
+        '''
         print("flatten_dict")
         for job in self.jobs:
             print(job)
+        '''
         #
         self.__load_standard_attributes(standard_attributes_fn)
         self.__load_models(model_dir)
@@ -72,23 +74,27 @@ class JobSchemaDetection:
         for schema in schemas:
             mapping_attributes += schema.keys()
         #vananh
+        '''
         print("mapping attribute")
         print(mapping_attributes)
         print(len(mapping_attributes))
-
+        '''
         mapping_attributes = list(set(mapping_attributes))
         #vananh
+        '''
         print("mapping attribute 2")
         print(mapping_attributes) 
         print(len(mapping_attributes))
+        '''
         #tinh tong chu nhi? sao van giu nguyen ma tran??
         sum_matrix = np.sum(
             (self.__create_matrix_by_matched_schema(schema, self.standard_attributes, mapping_attributes) for schema in
              schemas))
+        '''
         print("sum_matrix")
         print(sum_matrix)
         print("\n")
-
+        '''
         matched_tuples = self.__match_by_matrix(sum_matrix)
 
         self.schema_mapping = {
@@ -101,8 +107,8 @@ class JobSchemaDetection:
         matrix = np.zeros((len(mapping_attributes), len(standard_attributes)))
         for mapping_attribute, standard_attribute in schema.items():
             matrix[mapping_attributes.index(mapping_attribute)][standard_attributes.index(standard_attribute)] = 1
-        print("ma tran")
-        print(matrix)
+        #print("ma tran")
+        #print(matrix)
         return matrix
 
     def __mapping_schema_one(self, job):
@@ -112,12 +118,12 @@ class JobSchemaDetection:
 
         remaining_standard_attributes = [attribute for attribute in self.standard_attributes if
                                          attribute not in mapping_schema.values() and attribute not in self.excluded_attributes]
-        print("remaining_standard_attributes")
-        print(remaining_standard_attributes)                      
+        #print("remaining_standard_attributes")
+        #print(remaining_standard_attributes)                      
         remaining_mapping_attributes = [attribute for attribute in job.keys() if
                                         attribute not in mapping_schema.keys() and attribute not in self.excluded_attributes]
-        print("remaining_mapping_attributes")
-        print(remaining_mapping_attributes)
+        #print("remaining_mapping_attributes")
+        #print(remaining_mapping_attributes)
         if len(match_min_max_salary) > 0:
             remaining_standard_attributes.remove("baseSalary_value")
 
@@ -208,8 +214,8 @@ class JobSchemaDetection:
         for attribute, value in job.items():
             if self.__is_salary(value):
                 #vananh
-                print("salary: ")
-                print(attribute,"---",value)
+                #print("salary: ")
+                #print(attribute,"---",value)
                 #vananh
                 min_max_attributes[attribute] = value
 

@@ -32,8 +32,7 @@ class SchemaCrawler(Spider):
     }
     # start_url = 'https://www.topcv.vn/viec-lam/moi-nhat.html?utm_source=click-search-job&utm_medium=page-job&utm_campaign=tracking-job'
     context = {}
-    domain = ""
-    currentDomain = ""
+    domain = None
 
     def __init__(self, name=None, **kwargs):
         self.start_url = kwargs.get('start_url')
@@ -46,7 +45,7 @@ class SchemaCrawler(Spider):
     def start_requests(self):
         self.context['start_url'] = self.start_url
         self.context['domain'] = self.domain
-        SchemaCrawler.currentDomain = self.domain
+        '''
         if not os.path.exists(get_context_file(self.domain)):
             if not os.path.exists(STANDARD_ATTRIBUTES_FN):
                 raise Exception('Not exist standard file: ' + STANDARD_ATTRIBUTES_FN)
@@ -54,7 +53,7 @@ class SchemaCrawler(Spider):
         '''
         #vananh
         yield Request(url=self.start_url, callback=self.get_data_format)
-        '''
+
     def parse(self, response):
         pass
 
@@ -97,7 +96,7 @@ class SchemaCrawler(Spider):
             yield Request(url=get_correct_url(job_urls[0], response), callback=self.get_job_sample, meta={'job_urls': job_urls[1:MAX_NO_SAMPLES]})
         
     def decide_schema(self):
-        #print("VanAnh\n\n")
+        print("VanAnh\n\n")
         print("so luong samples: ", len(self.samples))
         schema = JobSchemaDetection(self.samples, MODEL_DIR, STANDARD_ATTRIBUTES_FN,
                                     WEIGHT_MODEL_FN).get_mapping_schema()
@@ -111,11 +110,9 @@ class SchemaCrawler(Spider):
 
     def get_job_sample_json(self, response):
         samples = response.meta.setdefault('samples', [])
-        '''
         print("-------")
         print(response.meta['job_urls'])
         print("------")
-        '''
         job_urls = response.meta['job_urls']
         #print(response.meta)
         samples += self.get_json_from_response_json(response)
@@ -126,7 +123,7 @@ class SchemaCrawler(Spider):
                           meta={'samples': samples, 'job_urls': job_urls[1:]})
         else:
             self.samples = samples
-            self.decide_schema()
+            #self.decide_schema()
         
     def get_job_sample_microdata(self, response):
         samples = response.meta.setdefault('samples', [])
@@ -156,10 +153,71 @@ class SchemaCrawler(Spider):
                 job = json.loads(node.text, strict=False)
                 if job['@type'] == 'JobPosting':
                     #van anh
-                    if SchemaCrawler.currentDomain == "topcv":
-                        temp_job = job
-                        job = SchemaCrawler.seperate_attributes_topcv(temp_job)
-                    #print(job)
+                    #tach benefit va requirement ra khoi description
+                    
+                    inital_description = job['description']
+                    description_dom = etree.HTML(inital_description)
+                    first_benefit = ""
+                    first_requirement = ""
+                    if "jobBenefits" not in job:
+                        raw_benefits = description_dom.xpath("//*[contains(text(),'Quyền lợi')]/following-sibling::*")
+                        raw_benefits_str = ""
+                        for bnf in raw_benefits:
+                            bnf_str = etree.tostring(bnf,method='html',encoding="unicode")
+                            raw_benefits_str = raw_benefits_str + bnf_str
+                        first_benefit = etree.tostring(raw_benefits[0],method='html',encoding="unicode")
+                        jobBenefits = raw_benefits_str
+                        job["jobBenefits"] = jobBenefits
+                    if "experienceRequirements" not in job:
+                        raw_requirements = description_dom.xpath("//*[contains(text(),'Yêu cầu')]/following-sibling::*")
+                        requirements_str = ""
+                        req_length = len(raw_requirements)
+                        i = 0
+                        while i < req_length:
+                            req_str = etree.tostring(raw_requirements[i],method='html',encoding="unicode")
+                            if(first_benefit == req_str):
+                                folowing_req_str = etree.tostring(raw_requirements[i-1],method='html',encoding="unicode")
+                                requirements_str = requirements_str.replace(folowing_req_str,"")
+                                break
+                            requirements_str = requirements_str + req_str
+                            i += 1
+                        """
+                        for req in raw_requirements:
+                            req_str = etree.tostring(req,method='html',encoding="unicode")
+                            if(first_benefit == req_str):
+                                break
+                            requirements_str = requirements_str + req_str
+                        """
+                        first_requirement =  etree.tostring(raw_requirements[0],method='html',encoding="unicode")
+                        experienceRequirements = requirements_str
+                        job["experienceRequirements"] = experienceRequirements 
+                    #
+                    if first_requirement.strip() != "":
+                        std_description = description_dom.xpath("//*[contains(text(),'Mô tả')]/following-sibling::*")
+                        std_description_str = ""
+                        i = 0
+                        std_description_length = len(std_description)
+                        while i < std_description_length:
+                            des_str = etree.tostring(std_description[i],method='html',encoding="unicode")
+                            if first_requirement == des_str:
+                                folowing_des_str = etree.tostring(std_description[i-1],method='html',encoding="unicode")
+                                std_description_str = std_description_str.replace(folowing_des_str,"")
+                                break
+                            std_description_str = std_description_str + des_str
+                            i += 1
+                        '''
+                        for des in std_description:
+                            des_str = etree.tostring(des,method='html',encoding="unicode")
+                            if first_requirement == des_str:
+                                break
+                            std_description_str = std_description_str + des_str
+                        '''
+                        job["description"] = std_description_str
+                    print("*******************")
+                    print(job)
+                    print("\n\n")
+                    print("**************")
+                    #
                     result.append(job)
 
             except (ValueError, TypeError):
@@ -169,13 +227,11 @@ class SchemaCrawler(Spider):
     def get_json_from_response_microdata(self, response):
         print("microdata")
         raw_json = json.loads(self.microdata.rdf_from_source(response.body, 'json-ld').decode('utf8'))
-        #print(raw_json)
+        print(raw_json)
         result = parse_json(raw_json)
         return result
     #vananh
-    @staticmethod
-    def seperate_attributes_topcv(job):
-        print("ok cv")
+    def seperate_attributes_topcv(self,job):
         inital_description = job['description']
         description_dom = etree.HTML(inital_description)
         first_benefit = ""
@@ -202,6 +258,13 @@ class SchemaCrawler(Spider):
                     break
                 requirements_str = requirements_str + req_str
                 i += 1
+            """
+            for req in raw_requirements:
+                req_str = etree.tostring(req,method='html',encoding="unicode")
+                if(first_benefit == req_str):
+                    break
+                requirements_str = requirements_str + req_str
+            """
             first_requirement =  etree.tostring(raw_requirements[0],method='html',encoding="unicode")
             experienceRequirements = requirements_str
             job["experienceRequirements"] = experienceRequirements 
@@ -219,7 +282,19 @@ class SchemaCrawler(Spider):
                     break
                 std_description_str = std_description_str + des_str
                 i += 1
+            '''
+            for des in std_description:
+                des_str = etree.tostring(des,method='html',encoding="unicode")
+                if first_requirement == des_str:
+                    break
+                std_description_str = std_description_str + des_str
+            '''
             job["description"] = std_description_str
+
+        print("*******************")
+        print(job)
+        print("\n\n")
+        print("**************")
         return job
     #
 
@@ -266,10 +341,10 @@ class XpathCrawler(Spider):
         data += response.meta.setdefault('data', [])
         job_urls = response.meta['job_urls']
         if len(job_urls) == 0:
-            # map_xpath = module(self.mismatch_attributes, data) ko phai minh comment
+            # map_xpath = module(self.mismatch_attributes, data)
             map_xpath = XpathMapping(data, self.mismatch_attributes).get_xpath_mapping()
-            #print("ng")
-            #print(map_xpath)
+            print("ng")
+            print(map_xpath)
             job_selectors = self.context['selectors'].setdefault('job_selectors', {})
             for attribute, xpath in map_xpath.items():
                 job_selectors[MAPPING_NUM_LABEL[attribute]] = xpath
