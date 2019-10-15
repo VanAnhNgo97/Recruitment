@@ -1,3 +1,274 @@
 2019-10-15 00:16:28 [schema_crawler] ERROR: {'start_url': 'https://www.topcv.vn/viec-lam/moi-nhat.html?utm_source=click-search-job&utm_medium=page-job&utm_campaign=tracking-job', 'domain': 'topcv', 'data_format': 'json+ld', 'schema': {'baseSalary_value_minValue': 'baseSalary_minValue', 'jobLocation_address_streetAddress': 'jobLocation_address_addressLocality', 'employmentType': 'employmentType', 'hiringOrganization_name': 'hiringOrganization_name', 'jobLocation_address_addressCountry': 'jobLocation_address_addressCountry', 'experienceRequirements': 'skills', 'baseSalary_currency': 'baseSalary_currency', 'jobLocation_address_addressRegion': 'jobLocation_address_addressRegion', 'baseSalary_value_unitText': 'baseSalary_unitText', 'title': 'jobBenefits', 'baseSalary_value_value': 'baseSalary_maxValue', 'datePosted': 'datePosted', 'skills': 'occupationalCategory', 'validThrough': 'validThrough', 'description': 'description'}, 'selectors': {'job_url': "//*[@id='box-job-result']/div[1]/div/div/div[2]/h4/a", 'next_page': "//*[@id='box-job-result']/div[2]/ul/li[last()]/a"}, 'is_finished': False}
 2019-10-15 00:25:52 [schema_crawler] ERROR: {'start_url': 'https://www.topcv.vn/viec-lam/moi-nhat.html?utm_source=click-search-job&utm_medium=page-job&utm_campaign=tracking-job', 'domain': 'topcv', 'data_format': 'json+ld', 'schema': {'datePosted': 'datePosted', 'employmentType': 'employmentType', 'baseSalary_value_unitText': 'baseSalary_unitText', 'validThrough': 'validThrough', 'baseSalary_currency': 'baseSalary_currency', 'description': 'description', 'baseSalary_value_minValue': 'baseSalary_minValue', 'skills': 'occupationalCategory', 'jobBenefits': 'jobBenefits', 'hiringOrganization_name': 'hiringOrganization_name', 'jobLocation_address_streetAddress': 'jobLocation_address_addressLocality', 'jobLocation_address_addressCountry': 'jobLocation_address_addressCountry', 'jobLocation_address_addressRegion': 'jobLocation_address_addressRegion', 'title': 'title', 'baseSalary_value_maxValue': 'baseSalary_maxValue', 'experienceRequirements': 'skills'}, 'selectors': {'job_url': "//*[@id='box-job-result']/div[1]/div/div/div[2]/h4/a", 'next_page': "//*[@id='box-job-result']/div[2]/ul/li[last()]/a"}, 'is_finished': False}
 2019-10-15 00:31:42 [schema_crawler] ERROR: {'start_url': 'https://www.topcv.vn/viec-lam/moi-nhat.html?utm_source=click-search-job&utm_medium=page-job&utm_campaign=tracking-job', 'domain': 'topcv', 'data_format': 'json+ld', 'schema': {'baseSalary_currency': 'baseSalary_currency', 'datePosted': 'datePosted', 'employmentType': 'employmentType', 'baseSalary_value_unitText': 'baseSalary_unitText', 'validThrough': 'validThrough', 'jobBenefits': 'jobBenefits', 'description': 'description', 'skills': 'occupationalCategory', 'hiringOrganization_name': 'hiringOrganization_name', 'baseSalary_value_minValue': 'baseSalary_minValue', 'title': 'title', 'jobLocation_address_addressCountry': 'jobLocation_address_addressCountry', 'jobLocation_address_streetAddress': 'jobLocation_address_addressLocality', 'jobLocation_address_addressRegion': 'jobLocation_address_addressRegion', 'baseSalary_value_maxValue': 'baseSalary_maxValue', 'experienceRequirements': 'skills'}, 'selectors': {'job_url': "//*[@id='box-job-result']/div[1]/div/div/div[2]/h4/a", 'next_page': "//*[@id='box-job-result']/div[2]/ul/li[last()]/a"}, 'is_finished': False}
+2019-10-15 11:02:06 [scrapy.core.scraper] ERROR: Spider error processing <GET https://www.topcv.vn/viec-lam/nhan-vien-tu-van-luong-toi-thieu-10-trieu/155721.html> (referer: https://www.topcv.vn/viec-lam/thu-kho-warehouse-supervisor/154153.html)
+Traceback (most recent call last):
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/utils/defer.py", line 102, in iter_errback
+    yield next(it)
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/offsite.py", line 29, in process_spider_output
+    for x in result:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/referer.py", line 339, in <genexpr>
+    return (_set_referer(r) for r in result or ())
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/urllength.py", line 37, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/depth.py", line 58, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/VanAnh/DoAn/Recruitment/support_crawler.py", line 129, in get_job_sample_json
+    self.decide_schema()
+  File "/home/vananh/VanAnh/DoAn/Recruitment/support_crawler.py", line 103, in decide_schema
+    WEIGHT_MODEL_FN).get_mapping_schema()
+  File "/home/vananh/VanAnh/DoAn/Recruitment/utils/detect_schema.py", line 24, in __init__
+    self.__mapping_schema_many(self.jobs)
+  File "/home/vananh/VanAnh/DoAn/Recruitment/utils/detect_schema.py", line 92, in __mapping_schema_many
+    schemas))
+  File "/home/vananh/.local/lib/python3.6/site-packages/numpy/core/fromnumeric.py", line 2069, in sum
+    res = _sum_(a)
+  File "/home/vananh/VanAnh/DoAn/Recruitment/utils/detect_schema.py", line 91, in <genexpr>
+    (self.__create_matrix_by_matched_schema(schema, self.standard_attributes, mapping_attributes) for schema in
+  File "/home/vananh/VanAnh/DoAn/Recruitment/utils/detect_schema.py", line 109, in __create_matrix_by_matched_schema
+    matrix[mapping_attributes.index(mapping_attribute)][standard_attributes.index(standard_attribute)] = 1
+ValueError: '2019-10-09' is not in list
+2019-10-15 11:02:06 [scrapy.core.engine] ERROR: Error while obtaining start requests
+Traceback (most recent call last):
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/engine.py", line 127, in _next_request
+    request = next(slot.start_requests)
+  File "/home/vananh/VanAnh/DoAn/Recruitment/support_crawler.py", line 246, in start_requests
+    raise Exception('Not exist context file: ' + get_context_file(self.domain))
+Exception: Not exist context file: /home/vananh/VanAnh/DoAn/Recruitment/schema/topcv_context.json
+2019-10-15 11:02:06 [scrapy.core.engine] ERROR: Error while obtaining start requests
+Traceback (most recent call last):
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/engine.py", line 127, in _next_request
+    request = next(slot.start_requests)
+  File "/home/vananh/VanAnh/DoAn/Recruitment/crawler.py", line 61, in start_requests
+    raise Exception('Context file name not existed: ' + get_context_file(self.domain))
+Exception: Context file name not existed: /home/vananh/VanAnh/DoAn/Recruitment/schema/topcv_context.json
+2019-10-15 11:06:12 [scrapy.core.scraper] ERROR: Spider error processing <GET https://www.topcv.vn/viec-lam/nhan-vien-kinh-doanh-bds-luong-cung-5tr-hoa-hong/101546.html> (referer: https://www.topcv.vn/brand/cong-ty-co-phan-babylons/tuyen-dung/nhan-vien-cskh-yeu-cau-tieng-anh-j154788.html)
+Traceback (most recent call last):
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/utils/defer.py", line 102, in iter_errback
+    yield next(it)
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/offsite.py", line 29, in process_spider_output
+    for x in result:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/referer.py", line 339, in <genexpr>
+    return (_set_referer(r) for r in result or ())
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/urllength.py", line 37, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/depth.py", line 58, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/VanAnh/DoAn/Recruitment/support_crawler.py", line 129, in get_job_sample_json
+    self.decide_schema()
+  File "/home/vananh/VanAnh/DoAn/Recruitment/support_crawler.py", line 103, in decide_schema
+    WEIGHT_MODEL_FN).get_mapping_schema()
+  File "/home/vananh/VanAnh/DoAn/Recruitment/utils/detect_schema.py", line 24, in __init__
+    self.__mapping_schema_many(self.jobs)
+  File "/home/vananh/VanAnh/DoAn/Recruitment/utils/detect_schema.py", line 92, in __mapping_schema_many
+    schemas))
+  File "/home/vananh/.local/lib/python3.6/site-packages/numpy/core/fromnumeric.py", line 2069, in sum
+    res = _sum_(a)
+  File "/home/vananh/VanAnh/DoAn/Recruitment/utils/detect_schema.py", line 91, in <genexpr>
+    (self.__create_matrix_by_matched_schema(schema, self.standard_attributes, mapping_attributes) for schema in
+  File "/home/vananh/VanAnh/DoAn/Recruitment/utils/detect_schema.py", line 109, in __create_matrix_by_matched_schema
+    matrix[mapping_attributes.index(mapping_attribute)][standard_attributes.index(standard_attribute)] = 1
+ValueError: '2019-10-10' is not in list
+2019-10-15 11:10:45 [schema_crawler] ERROR: {'start_url': 'https://www.topcv.vn/viec-lam/moi-nhat.html?utm_source=click-search-job&utm_medium=page-job&utm_campaign=tracking-job', 'domain': 'topcv', 'data_format': 'json+ld', 'schema': {'baseSalary_value_unitText': 'baseSalary_unitText', 'employmentType': 'employmentType', 'datePosted': 'datePosted', 'validThrough': 'validThrough', 'baseSalary_currency': 'baseSalary_currency', 'jobBenefits': 'jobBenefits', 'description': 'description', 'baseSalary_value_minValue': 'baseSalary_minValue', 'jobLocation_address_addressCountry': 'jobLocation_address_addressCountry', 'jobLocation_address_addressRegion': 'jobLocation_address_addressRegion', 'skills': 'occupationalCategory', 'hiringOrganization_name': 'hiringOrganization_name', 'jobLocation_address_streetAddress': 'jobLocation_address_addressLocality', 'title': 'title', 'baseSalary_value_maxValue': 'baseSalary_maxValue', 'experienceRequirements': 'skills'}, 'selectors': {'job_url': "//*[@id='box-job-result']/div[1]/div/div/div[2]/h4/a", 'next_page': "//*[@id='box-job-result']/div[2]/ul/li[last()]/a"}, 'is_finished': False}
+2019-10-15 11:12:35 [schema_crawler] ERROR: {'start_url': 'https://www.topcv.vn/viec-lam/moi-nhat.html?utm_source=click-search-job&utm_medium=page-job&utm_campaign=tracking-job', 'domain': 'topcv', 'data_format': 'json+ld', 'schema': {'validThrough': 'validThrough', 'employmentType': 'employmentType', 'datePosted': 'datePosted', 'baseSalary_currency': 'baseSalary_currency', 'baseSalary_value_unitText': 'baseSalary_unitText', 'description': 'description', 'hiringOrganization_name': 'hiringOrganization_name', 'baseSalary_value_minValue': 'baseSalary_minValue', 'skills': 'occupationalCategory', 'title': 'title', 'jobBenefits': 'jobBenefits', 'jobLocation_address_addressCountry': 'jobLocation_address_addressCountry', 'jobLocation_address_addressRegion': 'jobLocation_address_addressRegion', 'jobLocation_address_streetAddress': 'jobLocation_address_addressLocality', 'baseSalary_value_maxValue': 'baseSalary_maxValue', 'experienceRequirements': 'skills'}, 'selectors': {'job_url': "//*[@id='box-job-result']/div[1]/div/div/div[2]/h4/a", 'next_page': "//*[@id='box-job-result']/div[2]/ul/li[last()]/a"}, 'is_finished': False}
+2019-10-15 11:34:17 [scrapy.core.scraper] ERROR: Spider error processing <GET https://www.topcv.vn/viec-lam/cong-tac-vien-ban-hang/159387.html> (referer: https://www.topcv.vn/viec-lam/moi-nhat.html?salary=0&exp=0&page=4)
+Traceback (most recent call last):
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/utils/defer.py", line 102, in iter_errback
+    yield next(it)
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/offsite.py", line 29, in process_spider_output
+    for x in result:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/referer.py", line 339, in <genexpr>
+    return (_set_referer(r) for r in result or ())
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/urllength.py", line 37, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/depth.py", line 58, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/VanAnh/DoAn/Recruitment/crawler.py", line 79, in parse_job_json
+    jobs = self.get_json_from_response_json(response)
+  File "/home/vananh/VanAnh/DoAn/Recruitment/crawler.py", line 117, in get_json_from_response_json
+    job = Crawler.seperate_attributes_topcv(temp_job)
+  File "/home/vananh/VanAnh/DoAn/Recruitment/crawler.py", line 217, in seperate_attributes_topcv
+    first_benefit = etree.tostring(raw_benefits[0],method='html',encoding="unicode")
+IndexError: list index out of range
+2019-10-15 11:35:58 [scrapy.core.scraper] ERROR: Spider error processing <GET https://www.topcv.vn/viec-lam/head-chef-of-chinese-banquet-kitchen/156345.html> (referer: https://www.topcv.vn/viec-lam/moi-nhat.html?salary=0&exp=0&page=7)
+Traceback (most recent call last):
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/utils/defer.py", line 102, in iter_errback
+    yield next(it)
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/offsite.py", line 29, in process_spider_output
+    for x in result:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/referer.py", line 339, in <genexpr>
+    return (_set_referer(r) for r in result or ())
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/urllength.py", line 37, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/depth.py", line 58, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/VanAnh/DoAn/Recruitment/crawler.py", line 79, in parse_job_json
+    jobs = self.get_json_from_response_json(response)
+  File "/home/vananh/VanAnh/DoAn/Recruitment/crawler.py", line 117, in get_json_from_response_json
+    job = Crawler.seperate_attributes_topcv(temp_job)
+  File "/home/vananh/VanAnh/DoAn/Recruitment/crawler.py", line 217, in seperate_attributes_topcv
+    first_benefit = etree.tostring(raw_benefits[0],method='html',encoding="unicode")
+IndexError: list index out of range
+2019-10-15 11:42:24 [scrapy.core.scraper] ERROR: Spider error processing <GET https://www.topcv.vn/viec-lam/nhan-vien-ke-toan-cong-no/90315.html> (referer: https://www.topcv.vn/viec-lam/moi-nhat.html?salary=0&exp=0&page=22)
+Traceback (most recent call last):
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/utils/defer.py", line 102, in iter_errback
+    yield next(it)
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/offsite.py", line 29, in process_spider_output
+    for x in result:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/referer.py", line 339, in <genexpr>
+    return (_set_referer(r) for r in result or ())
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/urllength.py", line 37, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/depth.py", line 58, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/VanAnh/DoAn/Recruitment/crawler.py", line 79, in parse_job_json
+    jobs = self.get_json_from_response_json(response)
+  File "/home/vananh/VanAnh/DoAn/Recruitment/crawler.py", line 117, in get_json_from_response_json
+    job = Crawler.seperate_attributes_topcv(temp_job)
+  File "/home/vananh/VanAnh/DoAn/Recruitment/crawler.py", line 217, in seperate_attributes_topcv
+    first_benefit = etree.tostring(raw_benefits[0],method='html',encoding="unicode")
+IndexError: list index out of range
+2019-10-15 11:51:27 [scrapy.core.scraper] ERROR: Spider error processing <GET https://www.topcv.vn/viec-lam/nhan-vien-kinh-doanh/158616.html> (referer: https://www.topcv.vn/viec-lam/moi-nhat.html?salary=0&exp=0&page=44)
+Traceback (most recent call last):
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/utils/defer.py", line 102, in iter_errback
+    yield next(it)
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/offsite.py", line 29, in process_spider_output
+    for x in result:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/referer.py", line 339, in <genexpr>
+    return (_set_referer(r) for r in result or ())
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/urllength.py", line 37, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/depth.py", line 58, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/VanAnh/DoAn/Recruitment/crawler.py", line 79, in parse_job_json
+    jobs = self.get_json_from_response_json(response)
+  File "/home/vananh/VanAnh/DoAn/Recruitment/crawler.py", line 117, in get_json_from_response_json
+    job = Crawler.seperate_attributes_topcv(temp_job)
+  File "/home/vananh/VanAnh/DoAn/Recruitment/crawler.py", line 217, in seperate_attributes_topcv
+    first_benefit = etree.tostring(raw_benefits[0],method='html',encoding="unicode")
+IndexError: list index out of range
+2019-10-15 11:52:07 [scrapy.core.scraper] ERROR: Spider error processing <GET https://www.topcv.vn/viec-lam/nhan-vien-xac-nhan-don-hang/159354.html> (referer: https://www.topcv.vn/viec-lam/moi-nhat.html?salary=0&exp=0&page=46)
+Traceback (most recent call last):
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/utils/defer.py", line 102, in iter_errback
+    yield next(it)
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/offsite.py", line 29, in process_spider_output
+    for x in result:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/referer.py", line 339, in <genexpr>
+    return (_set_referer(r) for r in result or ())
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/urllength.py", line 37, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/depth.py", line 58, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/VanAnh/DoAn/Recruitment/crawler.py", line 85, in parse_job_json
+    print(selector)
+OSError: [Errno 5] Input/output error
+2019-10-15 12:00:05 [scrapy.core.scraper] ERROR: Spider error processing <GET https://www.topcv.vn/viec-lam/cong-tac-vien-ban-hang/159387.html> (referer: https://www.topcv.vn/viec-lam/moi-nhat.html?salary=0&exp=0&page=7)
+Traceback (most recent call last):
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/utils/defer.py", line 102, in iter_errback
+    yield next(it)
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/offsite.py", line 29, in process_spider_output
+    for x in result:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/referer.py", line 339, in <genexpr>
+    return (_set_referer(r) for r in result or ())
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/urllength.py", line 37, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/depth.py", line 58, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/VanAnh/DoAn/Recruitment/crawler.py", line 79, in parse_job_json
+    jobs = self.get_json_from_response_json(response)
+  File "/home/vananh/VanAnh/DoAn/Recruitment/crawler.py", line 117, in get_json_from_response_json
+    job = Crawler.seperate_attributes_topcv(temp_job)
+  File "/home/vananh/VanAnh/DoAn/Recruitment/crawler.py", line 217, in seperate_attributes_topcv
+    first_benefit = etree.tostring(raw_benefits[0],method='html',encoding="unicode")
+IndexError: list index out of range
+2019-10-15 12:01:14 [scrapy.core.scraper] ERROR: Spider error processing <GET https://www.topcv.vn/viec-lam/head-chef-of-chinese-banquet-kitchen/156345.html> (referer: https://www.topcv.vn/viec-lam/moi-nhat.html?salary=0&exp=0&page=10)
+Traceback (most recent call last):
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/utils/defer.py", line 102, in iter_errback
+    yield next(it)
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/offsite.py", line 29, in process_spider_output
+    for x in result:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/referer.py", line 339, in <genexpr>
+    return (_set_referer(r) for r in result or ())
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/urllength.py", line 37, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/depth.py", line 58, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/VanAnh/DoAn/Recruitment/crawler.py", line 79, in parse_job_json
+    jobs = self.get_json_from_response_json(response)
+  File "/home/vananh/VanAnh/DoAn/Recruitment/crawler.py", line 117, in get_json_from_response_json
+    job = Crawler.seperate_attributes_topcv(temp_job)
+  File "/home/vananh/VanAnh/DoAn/Recruitment/crawler.py", line 217, in seperate_attributes_topcv
+    first_benefit = etree.tostring(raw_benefits[0],method='html',encoding="unicode")
+IndexError: list index out of range

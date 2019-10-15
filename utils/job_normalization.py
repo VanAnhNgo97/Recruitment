@@ -1,6 +1,7 @@
 import re
 import json
 import os
+import pandas as pd
 
 
 def load_dict(dict_file_name):
@@ -24,6 +25,9 @@ def normalize_job(job):
         job['jobLocation']['address']['addressRegion'])
     job['baseSalary']['minValue'] = normalize_salary(job['baseSalary']['minValue'])
     job['baseSalary']['maxValue'] = normalize_salary(job['baseSalary']['maxValue'])
+    #vananh
+    job['datePosted'] = normalize_date(job['datePosted'])
+    job['validThrough'] = normalize_date(job['validThrough'])
     return job
 
 
@@ -68,3 +72,14 @@ def normalize_salary(salary_value):
         if len(value_list) > 0:
             res = int(value_list[-1]) * 1000000
     return res
+
+#vananh
+def normalize_date(date):
+    year_month_date = re.split(r'\/-', date[:10])
+    date_str = ""
+    if len(year_month_date[0]) == 2:
+        date_str =  '-'.join(year_month_date[::-1])
+    else:
+        date_str = '-'.join(year_month_date)
+    day = pd.to_datetime(date_str)
+    return day

@@ -206,6 +206,9 @@ class JobSchemaDetection:
                 '''
                 date_mapping[items[1][0]] = 'datePosted'
                 date_mapping[items[0][0]] = 'validThrough'
+            #van anh-loi roi
+            #date_mapping[items[0][1]] = date_normalize(items[0][1])
+            #date_mapping[items[1][1]] = date_normalize(items[1][1])
                 
         return date_mapping
 

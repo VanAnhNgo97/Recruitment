@@ -21,9 +21,10 @@ def crawl():
                                 next_page=next_page_selector, domain=domain)
         
         yield runner.crawl(XpathCrawler, name="xpath_crawler", domain=domain)
-        '''
+        
         yield runner.crawl(Crawler, name="crawler", domain=domain)
-        '''
+        
+        
     reactor.stop()
 
 

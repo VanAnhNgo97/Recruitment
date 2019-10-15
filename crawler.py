@@ -23,6 +23,7 @@ class Crawler(Spider):
     map_schema = None
     data_reduction = None
     parse_job = None
+    currentDomain = ""
 
     custom_settings = {
         # 'FEED_FORMAT': 'json',
@@ -37,6 +38,7 @@ class Crawler(Spider):
 
     def __init__(self, name=None, **kwargs):
         self.domain = kwargs.get('domain')
+        Crawler.currentDomain = self.domain
         super(Crawler, self).__init__(name, **kwargs)
 
     def start_requests(self):
@@ -94,7 +96,7 @@ class Crawler(Spider):
             job = self.change_to_right_form(job)
             if job_selectors is not None:
                 for field, selector in job_selectors.items():
-                    print(selector)
+                    #print(selector)
                     job[field] = ','.join(
                         text.strip() for text in response.xpath(selector + '/text()').extract() if text is not None)
                 job = self.normalize(job, job_url)
@@ -109,6 +111,10 @@ class Crawler(Spider):
             try:
                 job = json.loads(node.text, strict=False)
                 if job['@type'] == 'JobPosting':
+                    #van anh
+                    if Crawler.currentDomain == "topcv":
+                        temp_job = job
+                        job = Crawler.seperate_attributes_topcv(temp_job)
                     result.append(job)
 
             except (ValueError, TypeError):
@@ -188,10 +194,62 @@ class Crawler(Spider):
             address_region = job['jobLocation']['address']['addressRegion']
         #vananh
         #validThrough = 
+        #trong db la date => chuyen ve str
         date_str = job['validThrough']
         validThroughDate = pd.to_datetime(date_str)
-        valid_through = str(validThroughDate.day) + "-" + str(validThroughDate.month) + "-" + str(validThroughDate.year)
+        valid_through = str(validThroughDate.year) + "-" + str(validThroughDate.month) + "-" + str(validThroughDate.day)
         return [title, hiring_organization_name, address_region, valid_through]
+    #van anh
+    #vananh
+    @staticmethod
+    def seperate_attributes_topcv(job):
+        #print("ok cv")
+        inital_description = job['description']
+        description_dom = etree.HTML(inital_description)
+        first_benefit = ""
+        first_requirement = ""
+        if "jobBenefits" not in job:
+            raw_benefits = description_dom.xpath("//*[contains(text(),'Quyền lợi')]/following-sibling::*")
+            raw_benefits_str = ""
+            for bnf in raw_benefits:
+                bnf_str = etree.tostring(bnf,method='html',encoding="unicode")
+                raw_benefits_str = raw_benefits_str + bnf_str
+            first_benefit = etree.tostring(raw_benefits[0],method='html',encoding="unicode")
+            jobBenefits = raw_benefits_str
+            job["jobBenefits"] = jobBenefits
+        if "experienceRequirements" not in job:
+            raw_requirements = description_dom.xpath("//*[contains(text(),'Yêu cầu')]/following-sibling::*")
+            requirements_str = ""
+            req_length = len(raw_requirements)
+            i = 0
+            while i < req_length:
+                req_str = etree.tostring(raw_requirements[i],method='html',encoding="unicode")
+                if(first_benefit == req_str):
+                    folowing_req_str = etree.tostring(raw_requirements[i-1],method='html',encoding="unicode")
+                    requirements_str = requirements_str.replace(folowing_req_str,"")
+                    break
+                requirements_str = requirements_str + req_str
+                i += 1
+            first_requirement =  etree.tostring(raw_requirements[0],method='html',encoding="unicode")
+            experienceRequirements = requirements_str
+            job["experienceRequirements"] = experienceRequirements 
+        #
+        if first_requirement.strip() != "":
+            std_description = description_dom.xpath("//*[contains(text(),'Mô tả')]/following-sibling::*")
+            std_description_str = ""
+            i = 0
+            std_description_length = len(std_description)
+            while i < std_description_length:
+                des_str = etree.tostring(std_description[i],method='html',encoding="unicode")
+                if first_requirement == des_str:
+                    folowing_des_str = etree.tostring(std_description[i-1],method='html',encoding="unicode")
+                    std_description_str = std_description_str.replace(folowing_des_str,"")
+                    break
+                std_description_str = std_description_str + des_str
+                i += 1
+            job["description"] = std_description_str
+        return job
+    #
 
     def close(self, spider, reason):
         print('Number of duplicated items: %d' % self.no_duplicated_items)

@@ -67,7 +67,7 @@ class DataReduction:
             #print("------------------------")
             if inner_flag:
                 #flag = True
-                #vananh
+                #vananh kiem tra truong ngay thang
                 if x_normalize[-1] == y[-1]:
                     flag = True
                 else:

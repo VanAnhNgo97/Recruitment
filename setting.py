@@ -7,11 +7,11 @@ MODEL_DIR = 'models'
 STANDARD_ATTRIBUTES_FN = os.path.join(DIR_PATH, 'utils/attributes.json')
 WEIGHT_MODEL_FN = os.path.join(DIR_PATH, 'utils/weight.json')
 #van anh
-MAX_NO_SAMPLES = 30 #ban dau = 20 
+MAX_NO_SAMPLES = 20 #ban dau = 20 
 
 MONGO_URI = 'mongodb://localhost:27017/'
 MONGO_DATABASE = 'recruitment'
-MONGO_COLLECTION = 'topcv_test2'
+MONGO_COLLECTION = 'topcv_test4'
 
 SCRAPY_CONFIG = {
     'DUPEFILTER_CLASS': 'scrapy.dupefilters.BaseDupeFilter',
