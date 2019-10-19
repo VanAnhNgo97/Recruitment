@@ -9,7 +9,8 @@ import numpy as np
 
 class JobSchemaDetection:
     def __init__(self, jobs, model_dir, standard_attributes_fn, weight_model_fn):
-        self.excluded_attributes = ['baseSalary_minValue', 'baseSalary_maxValue', 'datePosted', 'validThrough']
+        #them 1 truong moi
+        self.excluded_attributes = ['baseSalary_minValue', 'baseSalary_maxValue', 'datePosted', 'validThrough','totalJobOpenings']
         self.jobs = [flatten_dict(job) for job in jobs]
         #van anh
         '''
@@ -115,7 +116,14 @@ class JobSchemaDetection:
         #doi chieu min=min hay min=max
         match_min_max_salary = self.__match_min_max_base_salary(job)
         mapping_schema = {**self.__match_attributes_date_type(job), **match_min_max_salary}
-
+        mapping_schema["totalJobOpenings"] = "totalJobOpenings"
+        '''
+        print("kieu mapping_schema")
+        print(type(mapping_schema))
+        for k,v in mapping_schema.items():
+            print(k,'---',v)
+        '''
+        #khong hieu???
         remaining_standard_attributes = [attribute for attribute in self.standard_attributes if
                                          attribute not in mapping_schema.values() and attribute not in self.excluded_attributes]
         #print("remaining_standard_attributes")

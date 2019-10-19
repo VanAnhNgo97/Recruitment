@@ -10,8 +10,8 @@ WEIGHT_MODEL_FN = os.path.join(DIR_PATH, 'utils/weight.json')
 MAX_NO_SAMPLES = 20 #ban dau = 20 
 
 MONGO_URI = 'mongodb://localhost:27017/'
-MONGO_DATABASE = 'recruitment'
-MONGO_COLLECTION = 'topcv_test4'
+MONGO_DATABASE = 'recruitment_1910'
+MONGO_COLLECTION = 'topcv'
 
 SCRAPY_CONFIG = {
     'DUPEFILTER_CLASS': 'scrapy.dupefilters.BaseDupeFilter',
@@ -29,7 +29,8 @@ SCRAPY_CONFIG = {
     # 'MONGO_DATABASE': MONGO_DATABASE,
     # 'MONGO_COLLECTION': MONGO_COLLECTION
 }
-
+#vananh
+#them 2 thuoc tinh duoi cung
 STANDARD_ATTRIBUTES = [
     "title",
     "description",
@@ -48,7 +49,9 @@ STANDARD_ATTRIBUTES = [
     "baseSalary_minValue",
     "baseSalary_maxValue",
     "baseSalary_unitText",
-    "occupationalCategory"
+    "occupationalCategory",
+    "totalJobOpenings",
+   
 ]
 
 MAPPING_LABEL_NUM = {

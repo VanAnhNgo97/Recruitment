@@ -18,6 +18,7 @@ from utils.utils import flatten_dict
 from utils.remove_similar_data.remove_similar_data import DataReduction
 from wrapper.xpath_mapping import XpathMapping
 from setting import *
+from google.cloud import translate
 
 
 class SchemaCrawler(Spider):
@@ -47,14 +48,15 @@ class SchemaCrawler(Spider):
         self.context['start_url'] = self.start_url
         self.context['domain'] = self.domain
         SchemaCrawler.currentDomain = self.domain
+        
         if not os.path.exists(get_context_file(self.domain)):
             if not os.path.exists(STANDARD_ATTRIBUTES_FN):
                 raise Exception('Not exist standard file: ' + STANDARD_ATTRIBUTES_FN)
             yield Request(url=self.start_url, callback=self.get_data_format)
-        '''
+        
         #vananh
-        yield Request(url=self.start_url, callback=self.get_data_format)
-        '''
+        #yield Request(url=self.start_url, callback=self.get_data_format)
+        
     def parse(self, response):
         pass
 
@@ -62,7 +64,7 @@ class SchemaCrawler(Spider):
         #chi lay 1 url dau tien
         sample_job_url = response.xpath(self.selectors['job_url'] + '/@href').get()
         #vananh
-        print(len(sample_job_url))
+        #print(len(sample_job_url))
         #print(sample_job_url)
         yield Request(url=get_correct_url(sample_job_url, response), callback=self.decide_data_format)
 
@@ -141,13 +143,15 @@ class SchemaCrawler(Spider):
             self.decide_schema()
 
     def is_data_json_format(self, response):
-        return len(self.get_json_from_response_json(response)) > 0
+        return len(self.get_json_from_response_json(response,True)) > 0 #them True
 
     def is_data_microdata_format(self, response):
         return len(self.get_json_from_response_microdata(response)) > 0
 
     @staticmethod
-    def get_json_from_response_json(response):
+    def get_json_from_response_json(response,is_sample=False):
+        print("url:")
+        print(response.url)
         result = []
         dom = etree.HTML(response.body.decode("utf8"))
         json_node = dom.xpath("//script[text()]")#xac dinh cac doan script json+ld
@@ -156,10 +160,19 @@ class SchemaCrawler(Spider):
                 job = json.loads(node.text, strict=False)
                 if job['@type'] == 'JobPosting':
                     #van anh
-                    if SchemaCrawler.currentDomain == "topcv":
-                        temp_job = job
-                        job = SchemaCrawler.seperate_attributes_topcv(temp_job)
-                    #print(job)
+                    if is_sample == False:#minh them vao
+                        #dich tai day
+                        translate_client = translate.Client()
+                        source_info = translate_client.detect_language(job['description'])
+                        if(source_info["language"] != "vi"):
+                            return result
+                        #
+                        if SchemaCrawler.currentDomain == "topcv":
+                            temp_job = job
+                            job = SchemaCrawler.seperate_attributes_topcv(temp_job,dom)
+                            #lay ra so luong tuyendung
+
+                        #print(job)
                     result.append(job)
 
             except (ValueError, TypeError):
@@ -174,9 +187,10 @@ class SchemaCrawler(Spider):
         return result
     #vananh
     @staticmethod
-    def seperate_attributes_topcv(job):
+    def seperate_attributes_topcv(job,dom):
         print("ok cv")
         inital_description = job['description']
+        #kiem tra tieng anh - true return None
         description_dom = etree.HTML(inital_description)
         first_benefit = ""
         first_requirement = ""
@@ -220,6 +234,26 @@ class SchemaCrawler(Spider):
                 std_description_str = std_description_str + des_str
                 i += 1
             job["description"] = std_description_str
+        #lay so luong tuyen dung:
+        
+        job_available_node = dom.xpath("//div[@id='col-job-right']//div[@id='box-info-job']//div[@class='job-info-item']//*[contains(text(),'cần tuyển')]/following-sibling::*[1]")
+        #print("so luong:")
+        #print(job_available_node)
+        if(len(job_available_node) == 0):
+            job_available_node = dom.xpath("///*[@data-original-title='Số lượng cần tuyển']")
+        if(len(job_available_node) > 0):
+            job_available_text = job_available_node[0].text
+            if "không giới hạn" in job_available_text.lower():
+                job["totalJobOpenings"] = 50
+            elif "người" in job_available_text.lower():
+                num_job_available = (job_available_text.split(" ")[0])
+                if(num_job_available.isdigit()):
+                    job["totalJobOpenings"] = int(num_job_available)
+            else:
+                job["totalJobOpenings"] = 1
+        else:
+            job["totalJobOpenings"] = 1
+        #print(job["totalJobOpenings"])
         return job
     #
 
@@ -266,6 +300,7 @@ class XpathCrawler(Spider):
         data += response.meta.setdefault('data', [])
         job_urls = response.meta['job_urls']
         if len(job_urls) == 0:
+            #lay phan loai nhung truong con thieu gia tri
             # map_xpath = module(self.mismatch_attributes, data) ko phai minh comment
             map_xpath = XpathMapping(data, self.mismatch_attributes).get_xpath_mapping()
             #print("ng")

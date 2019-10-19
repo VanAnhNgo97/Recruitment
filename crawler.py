@@ -12,6 +12,8 @@ from utils.utils import flatten_dict
 from utils.remove_similar_data.remove_similar_data import DataReduction
 from setting import *
 import pandas as pd
+from google.cloud import translate
+
 
 
 class Crawler(Spider):
@@ -23,7 +25,9 @@ class Crawler(Spider):
     map_schema = None
     data_reduction = None
     parse_job = None
+    #vananh
     currentDomain = ""
+    no_not_vi_doc = 0
 
     custom_settings = {
         # 'FEED_FORMAT': 'json',
@@ -64,7 +68,9 @@ class Crawler(Spider):
     def parse(self, response):
         next_page = response.xpath(self.context['selectors']['next_page'] + '/@href').get()
         job_urls = response.xpath(self.context['selectors']['job_url'] + '/@href').getall()
-
+        #vananh
+        #yield Request(url=get_correct_url(job_urls[0], response), callback=self.parse_job)
+        
         for job_url in job_urls:
             # job_url = response.urljoin(job_url)
             yield Request(url=get_correct_url(job_url, response), callback=self.parse_job)
@@ -100,6 +106,7 @@ class Crawler(Spider):
                     job[field] = ','.join(
                         text.strip() for text in response.xpath(selector + '/text()').extract() if text is not None)
                 job = self.normalize(job, job_url)
+                print(job_url)
                 yield job
 
     @staticmethod
@@ -112,9 +119,16 @@ class Crawler(Spider):
                 job = json.loads(node.text, strict=False)
                 if job['@type'] == 'JobPosting':
                     #van anh
+                    #dich tai day
+                    translate_client = translate.Client()
+                    source_info = translate_client.detect_language(job['description'])
+                    if(source_info["language"] != "vi"):
+                        Crawler.no_not_vi_doc = Crawler.no_not_vi_doc + 1
+                        return result
+                        #
                     if Crawler.currentDomain == "topcv":
                         temp_job = job
-                        job = Crawler.seperate_attributes_topcv(temp_job)
+                        job = Crawler.seperate_attributes_topcv(temp_job,dom)
                     result.append(job)
 
             except (ValueError, TypeError):
@@ -202,8 +216,7 @@ class Crawler(Spider):
     #van anh
     #vananh
     @staticmethod
-    def seperate_attributes_topcv(job):
-        #print("ok cv")
+    def seperate_attributes_topcv(job,dom):
         inital_description = job['description']
         description_dom = etree.HTML(inital_description)
         first_benefit = ""
@@ -248,9 +261,28 @@ class Crawler(Spider):
                 std_description_str = std_description_str + des_str
                 i += 1
             job["description"] = std_description_str
+
+        #lay so luong tuyen dung:
+        job_available_node = dom.xpath("//div[@id='col-job-right']//div[@id='box-info-job']//div[@class='job-info-item']//*[contains(text(),'cần tuyển')]/following-sibling::*[1]")
+        if(len(job_available_node) == 0):
+            job_available_node = dom.xpath("///*[@data-original-title='Số lượng cần tuyển']")
+        if(len(job_available_node) > 0):
+            job_available_text = job_available_node[0].text
+            if "không giới hạn" in job_available_text.lower():
+                job["totalJobOpenings"] = 50
+            elif "người" in job_available_text.lower():
+                num_job_available = (job_available_text.split(" ")[0])
+                if(num_job_available.isdigit()):
+                    job["totalJobOpenings"] = int(num_job_available)
+            else:
+                job["totalJobOpenings"] = 1
+        else:
+            job["totalJobOpenings"] = 1
+        #print(job["totalJobOpenings"])
         return job
     #
 
     def close(self, spider, reason):
+        print("Number of english items: ", self.no_not_vi_doc)
         print('Number of duplicated items: %d' % self.no_duplicated_items)
         print("Finished!")

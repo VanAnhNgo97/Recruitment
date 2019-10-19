@@ -2,6 +2,10 @@ import re
 import json
 import os
 import pandas as pd
+#vananh
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+
 
 
 def load_dict(dict_file_name):
@@ -16,6 +20,8 @@ def load_dict(dict_file_name):
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 CAREER_DICT = load_dict(os.path.join(DIR_PATH, 'dict/career.json'))
 ADDRESS_DICT = load_dict(os.path.join(DIR_PATH, 'dict/address.json'))
+#vananh
+CAREER_CODE_DICT = load_dict(os.path.join(DIR_PATH, 'dict/career_code.json'))
 
 
 def normalize_job(job):
@@ -28,6 +34,7 @@ def normalize_job(job):
     #vananh
     job['datePosted'] = normalize_date(job['datePosted'])
     job['validThrough'] = normalize_date(job['validThrough'])
+    job['validThrough'] = normalize_date_range(job['datePosted'],job['validThrough'])
     return job
 
 
@@ -38,18 +45,25 @@ def normalize_occupational_category(occupational_category):
         for careers in occupational_category:
             for career in careers.split(','):
                 career_tmp = re.sub(r"\s*[-\\/]+\s*", " - ", career.strip())
-                career_normalized = CAREER_DICT.get(career_tmp)
+                #vananh
+                #career_normalized = CAREER_DICT.get(career_tmp)
+                #print(career_tmp)
+                career_normalized = CAREER_CODE_DICT.get(career_tmp)
                 if career_normalized is not None:
-                    normalized_occupational_category.append(career_normalized)
+                    normalized_occupational_category.append(int(career_normalized))
     else:
         for career in occupational_category.split(','):
             career_tmp = re.sub(r"\s*[-\\/]+\s*", " - ", career.strip())
-            career_normalized = CAREER_DICT.get(career_tmp)
+            #vananh
+            #career_normalized = CAREER_DICT.get(career_tmp)
+            career_normalized = CAREER_CODE_DICT.get(career_tmp)
             if career_normalized is not None:
-                normalized_occupational_category.append(career_normalized)
+                normalized_occupational_category.append(int(career_normalized))
 
     if len(normalized_occupational_category) == 0:
-        normalized_occupational_category.append('Khác')
+        #vananh
+        #normalized_occupational_category.append('Khác')
+        normalized_occupational_category.append(0)
     return list(set(normalized_occupational_category))
 
 
@@ -83,3 +97,15 @@ def normalize_date(date):
         date_str = '-'.join(year_month_date)
     day = pd.to_datetime(date_str)
     return day
+
+#vananh
+def normalize_date_range(from_date, to_date):
+    suitable_date = from_date + relativedelta(months=3)
+    #print("max date:",suitable_date)
+    if suitable_date >= to_date:
+        return to_date
+    else:
+        return suitable_date
+
+
+
