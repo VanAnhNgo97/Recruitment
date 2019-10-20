@@ -18,7 +18,7 @@ from utils.utils import flatten_dict
 from utils.remove_similar_data.remove_similar_data import DataReduction
 from wrapper.xpath_mapping import XpathMapping
 from setting import *
-from google.cloud import translate
+from langdetect import detect
 
 
 class SchemaCrawler(Spider):
@@ -162,9 +162,8 @@ class SchemaCrawler(Spider):
                     #van anh
                     if is_sample == False:#minh them vao
                         #dich tai day
-                        translate_client = translate.Client()
-                        source_info = translate_client.detect_language(job['description'])
-                        if(source_info["language"] != "vi"):
+                        vi_lang = Crawler.is_vi_language(job["description"])
+                        if not vi_lang:
                             return result
                         #
                         if SchemaCrawler.currentDomain == "topcv":
@@ -255,6 +254,16 @@ class SchemaCrawler(Spider):
             job["totalJobOpenings"] = 1
         #print(job["totalJobOpenings"])
         return job
+
+    @staticmethod
+    def is_vi_language(raw_text):
+        tag_re = re.compile(r'<[^>]+>')
+        text = tag_re.sub('',raw_text)
+        text = text.strip()
+        result = detect(text)
+        if result != "vi":
+            return False
+        return True
     #
 
 

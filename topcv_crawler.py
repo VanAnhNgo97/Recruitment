@@ -12,7 +12,8 @@ from utils.utils import flatten_dict
 from utils.remove_similar_data.remove_similar_data import DataReduction
 from setting import *
 import pandas as pd
-from google.cloud import translate
+from langdetect import detect
+import seperate
 
 
 
@@ -70,13 +71,15 @@ class Crawler(Spider):
         #job_urls = response.xpath(self.context['selectors']['job_url'] + '/@href').getall()
         job_urls = []
         default_url = "https://www.topcv.vn/viec-lam/hn-money-lover-tuyen-ios-developer/"
-        for i in range(2,160364):
-            temp_url = default_url + str(i) + ".html"
-            job_urls.append(temp_url)
+        #max = 161477
+        for i in range(2,3):
+            job_url = default_url + str(i) + ".html"
+            yield Request(url=get_correct_url(job_url, response), callback=self.parse_job)
+        '''
         for job_url in job_urls:
             # job_url = response.urljoin(job_url)
             yield Request(url=get_correct_url(job_url, response), callback=self.parse_job)
-        '''
+        
         if next_page is not None:
             next_page = response.urljoin(next_page)
             yield Request(url=get_correct_url(next_page, response), callback=self.parse)
@@ -127,9 +130,8 @@ class Crawler(Spider):
                 if job['@type'] == 'JobPosting':
                     #van anh
                     #dich tai day
-                    translate_client = translate.Client()
-                    source_info = translate_client.detect_language(job['description'])
-                    if(source_info["language"] != "vi"):
+                    vi_lang = Crawler.is_vi_language(job['description'])
+                    if not vi_lang:
                         Crawler.no_not_vi_doc = Crawler.no_not_vi_doc + 1
                         return result
                         #
@@ -228,15 +230,18 @@ class Crawler(Spider):
         description_dom = etree.HTML(inital_description)
         first_benefit = ""
         first_requirement = ""
+        job["jobBenefits"] = ""
+        job["experienceRequirements"] = ""
         if "jobBenefits" not in job:
             raw_benefits = description_dom.xpath("//*[contains(text(),'Quyền lợi')]/following-sibling::*")
             raw_benefits_str = ""
             for bnf in raw_benefits:
                 bnf_str = etree.tostring(bnf,method='html',encoding="unicode")
                 raw_benefits_str = raw_benefits_str + bnf_str
-            first_benefit = etree.tostring(raw_benefits[0],method='html',encoding="unicode")
-            jobBenefits = raw_benefits_str
-            job["jobBenefits"] = jobBenefits
+            if len(raw_benefits) > 0:
+                first_benefit = etree.tostring(raw_benefits[0],method='html',encoding="unicode")
+                jobBenefits = raw_benefits_str
+                job["jobBenefits"] = jobBenefits
         if "experienceRequirements" not in job:
             raw_requirements = description_dom.xpath("//*[contains(text(),'Yêu cầu')]/following-sibling::*")
             requirements_str = ""
@@ -250,9 +255,10 @@ class Crawler(Spider):
                     break
                 requirements_str = requirements_str + req_str
                 i += 1
-            first_requirement =  etree.tostring(raw_requirements[0],method='html',encoding="unicode")
-            experienceRequirements = requirements_str
-            job["experienceRequirements"] = experienceRequirements 
+            if len(raw_requirements) > 0:
+                first_requirement =  etree.tostring(raw_requirements[0],method='html',encoding="unicode")
+                experienceRequirements = requirements_str
+                job["experienceRequirements"] = experienceRequirements 
         #
         if first_requirement.strip() != "":
             std_description = description_dom.xpath("//*[contains(text(),'Mô tả')]/following-sibling::*")
@@ -268,7 +274,12 @@ class Crawler(Spider):
                 std_description_str = std_description_str + des_str
                 i += 1
             job["description"] = std_description_str
-
+        #sua loi out of range
+        if job["experienceRequirements"] == "" or job["jobBenefits"] == "":
+            job["jobBenefits"] = seperate.extract_info(inital_description,"quyền lợi")
+            #job["description"] = seperate.extract_info(inital_description,"mô tả")
+            #job["experienceRequirements"] = seperate.extract_info(inital_description,"yêu cầu")
+            
         #lay so luong tuyen dung:
         job_available_node = dom.xpath("//div[@id='col-job-right']//div[@id='box-info-job']//div[@class='job-info-item']//*[contains(text(),'cần tuyển')]/following-sibling::*[1]")
         if(len(job_available_node) == 0):
@@ -287,6 +298,16 @@ class Crawler(Spider):
             job["totalJobOpenings"] = 1
         #print(job["totalJobOpenings"])
         return job
+    @staticmethod
+    def is_vi_language(raw_text):
+        tag_re = re.compile(r'<[^>]+>')
+        text = tag_re.sub('',raw_text)
+        text = text.strip()
+        result = detect(text)
+        if result != "vi":
+            return False
+        return True
+
     #
 
     def close(self, spider, reason):

@@ -11,7 +11,7 @@ MAX_NO_SAMPLES = 20 #ban dau = 20
 
 MONGO_URI = 'mongodb://localhost:27017/'
 MONGO_DATABASE = 'recruitment_1910'
-MONGO_COLLECTION = 'topcv'
+MONGO_COLLECTION = 'topcv_test'
 
 SCRAPY_CONFIG = {
     'DUPEFILTER_CLASS': 'scrapy.dupefilters.BaseDupeFilter',
@@ -80,6 +80,7 @@ MAPPING_LABEL_NUM = {
 
 
 }
+USER_AGENT = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:38.0) Gecko/20100101 Firefox/38.0"
 
 MAPPING_NUM_LABEL = {num: label for label, num in MAPPING_LABEL_NUM.items()}
 

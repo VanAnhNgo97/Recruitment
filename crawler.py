@@ -12,7 +12,7 @@ from utils.utils import flatten_dict
 from utils.remove_similar_data.remove_similar_data import DataReduction
 from setting import *
 import pandas as pd
-from google.cloud import translate
+from langdetect import detect
 
 
 
@@ -120,9 +120,8 @@ class Crawler(Spider):
                 if job['@type'] == 'JobPosting':
                     #van anh
                     #dich tai day
-                    translate_client = translate.Client()
-                    source_info = translate_client.detect_language(job['description'])
-                    if(source_info["language"] != "vi"):
+                    vi_lang = Crawler.is_vi_language(job["description"])
+                    if not vi_lang:
                         Crawler.no_not_vi_doc = Crawler.no_not_vi_doc + 1
                         return result
                         #
@@ -280,6 +279,16 @@ class Crawler(Spider):
             job["totalJobOpenings"] = 1
         #print(job["totalJobOpenings"])
         return job
+
+    @staticmethod
+    def is_vi_language(raw_text):
+        tag_re = re.compile(r'<[^>]+>')
+        text = tag_re.sub('',raw_text)
+        text = text.strip()
+        result = detect(text)
+        if result != "vi":
+            return False
+        return True
     #
 
     def close(self, spider, reason):

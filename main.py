@@ -4,11 +4,11 @@ from twisted.internet import reactor, defer
 from scrapy.utils.log import configure_logging
 
 from support_crawler import SchemaCrawler, XpathCrawler
-from crawler import Crawler
+#from crawler import Crawler
 from utils.model import NaiveBayesModel, DecisionTreeModel, LogisticRegressionModel
 from utils.preprocess import FeaturesTransformer
 from setting import SCRAPY_CONFIG, get_domain, WEB_LIST
-
+from topcv_crawler import Crawler
 
 @defer.inlineCallbacks
 def crawl():
