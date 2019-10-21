@@ -35,6 +35,11 @@ def normalize_job(job):
     job['datePosted'] = normalize_date(job['datePosted'])
     job['validThrough'] = normalize_date(job['validThrough'])
     job['validThrough'] = normalize_date_range(job['datePosted'],job['validThrough'])
+    if job['baseSalary']['maxValue'] == 0:
+        job['baseSalary']['maxValue'] = job['baseSalary']['minValue']
+    if job['baseSalary']['minValue'] == 0:
+        job['baseSalary']['minValue'] = job['baseSalary']['maxValue']
+    job['baseSalary']['value'] = normailze_base_salary(job['baseSalary']['minValue'],job['baseSalary']['maxValue'])
     return job
 
 
@@ -107,5 +112,7 @@ def normalize_date_range(from_date, to_date):
     else:
         return suitable_date
 
+def normailze_base_salary(min,max):
+    return (max + min)/2
 
 

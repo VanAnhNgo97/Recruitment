@@ -115,14 +115,20 @@ class JobSchemaDetection:
     def __mapping_schema_one(self, job):
         #doi chieu min=min hay min=max
         match_min_max_salary = self.__match_min_max_base_salary(job)
+        '''
+        for k,v in match_min_max_salary.items():
+            print(k,'****',v)
+        '''
         mapping_schema = {**self.__match_attributes_date_type(job), **match_min_max_salary}
         mapping_schema["totalJobOpenings"] = "totalJobOpenings"
         '''
+        for k, v in match_min_max_salary.items():
+            mapping_schema[k] = v
         print("kieu mapping_schema")
         print(type(mapping_schema))
         for k,v in mapping_schema.items():
             print(k,'---',v)
-        '''
+        '''        
         #khong hieu???
         remaining_standard_attributes = [attribute for attribute in self.standard_attributes if
                                          attribute not in mapping_schema.values() and attribute not in self.excluded_attributes]
@@ -223,7 +229,7 @@ class JobSchemaDetection:
     def __match_min_max_base_salary(self, job):
         min_max_attributes = {}
         for attribute, value in job.items():
-            if self.__is_salary(value):
+            if attribute != "totalJobOpenings" and self.__is_salary(value):
                 #vananh
                 #print("salary: ")
                 #print(attribute,"---",value)
@@ -231,17 +237,22 @@ class JobSchemaDetection:
                 min_max_attributes[attribute] = value
 
         min_max_base_salary_mapping = {}
+        #print("length   ",len(min_max_attributes))
         if len(min_max_attributes) == 2:
+            #print("lalal")
             items = list(min_max_attributes.items())
             #lay ra tien luong la so
             v0 = int(re.search(r'\d+', str(items[0][1])).group(0))
             v1 = int(re.search(r'\d+', str(items[1][1])).group(0))
+            #print("v0----",v0)
+            #print("v1----",v1)
             if v0 < v1:
                 min_max_base_salary_mapping[items[0][0]] = 'baseSalary_minValue'
                 min_max_base_salary_mapping[items[1][0]] = 'baseSalary_maxValue'
             else:
                 min_max_base_salary_mapping[items[1][0]] = 'baseSalary_minValue'
                 min_max_base_salary_mapping[items[0][0]] = 'baseSalary_maxValue'
+        
         return min_max_base_salary_mapping
 
     @staticmethod

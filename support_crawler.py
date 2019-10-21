@@ -162,7 +162,7 @@ class SchemaCrawler(Spider):
                     #van anh
                     if is_sample == False:#minh them vao
                         #dich tai day
-                        vi_lang = Crawler.is_vi_language(job["description"])
+                        vi_lang = SchemaCrawler.is_vi_language(job["description"])
                         if not vi_lang:
                             return result
                         #

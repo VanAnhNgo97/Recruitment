@@ -11,7 +11,7 @@ MAX_NO_SAMPLES = 20 #ban dau = 20
 
 MONGO_URI = 'mongodb://localhost:27017/'
 MONGO_DATABASE = 'recruitment_1910'
-MONGO_COLLECTION = 'topcv_test'
+MONGO_COLLECTION = 'topcv_real'
 
 SCRAPY_CONFIG = {
     'DUPEFILTER_CLASS': 'scrapy.dupefilters.BaseDupeFilter',

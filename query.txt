@@ -1,0 +1,15 @@
+db.topcv_test.find({
+    'occupationalCategory' : 8
+})
+   .projection({})
+   .sort({validThrough:1})
+   .count()
+//chay ok
+db.topcv_real.find({'occupationalCategory' : 8,
+    'datePosted' : {
+        $lte: ISODate('2016-01-21T07:00:00+07:00'),
+    }
+})
+   .projection({})
+   .sort({_id:-1})
+   

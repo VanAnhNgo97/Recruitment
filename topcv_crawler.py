@@ -29,6 +29,7 @@ class Crawler(Spider):
     #vananh
     currentDomain = ""
     no_not_vi_doc = 0
+    home = 0
 
     custom_settings = {
         # 'FEED_FORMAT': 'json',
@@ -72,7 +73,7 @@ class Crawler(Spider):
         job_urls = []
         default_url = "https://www.topcv.vn/viec-lam/hn-money-lover-tuyen-ios-developer/"
         #max = 161477
-        for i in range(2,3):
+        for i in range(70001,100000):
             job_url = default_url + str(i) + ".html"
             yield Request(url=get_correct_url(job_url, response), callback=self.parse_job)
         '''
@@ -120,6 +121,7 @@ class Crawler(Spider):
         result = []
         #vananh
         if response.url == "https://www.topcv.vn/viec-lam":
+            Crawler.home = Crawler.home + 1
             return result
         #
         dom = etree.HTML(response.body.decode("utf8"))
@@ -137,6 +139,7 @@ class Crawler(Spider):
                         #
                     if Crawler.currentDomain == "topcv":
                         temp_job = job
+                        print(response.url)
                         job = Crawler.seperate_attributes_topcv(temp_job,dom)
                     result.append(job)
 
@@ -230,10 +233,9 @@ class Crawler(Spider):
         description_dom = etree.HTML(inital_description)
         first_benefit = ""
         first_requirement = ""
-        job["jobBenefits"] = ""
-        job["experienceRequirements"] = ""
         if "jobBenefits" not in job:
             raw_benefits = description_dom.xpath("//*[contains(text(),'Quyền lợi')]/following-sibling::*")
+            print(len(raw_benefits))
             raw_benefits_str = ""
             for bnf in raw_benefits:
                 bnf_str = etree.tostring(bnf,method='html',encoding="unicode")
@@ -242,6 +244,8 @@ class Crawler(Spider):
                 first_benefit = etree.tostring(raw_benefits[0],method='html',encoding="unicode")
                 jobBenefits = raw_benefits_str
                 job["jobBenefits"] = jobBenefits
+            else:
+                job["jobBenefits"] = ""
         if "experienceRequirements" not in job:
             raw_requirements = description_dom.xpath("//*[contains(text(),'Yêu cầu')]/following-sibling::*")
             requirements_str = ""
@@ -255,12 +259,15 @@ class Crawler(Spider):
                     break
                 requirements_str = requirements_str + req_str
                 i += 1
-            if len(raw_requirements) > 0:
+            if len(raw_requirements) > 1: #neu = 1 la req = "" den benefit luon
                 first_requirement =  etree.tostring(raw_requirements[0],method='html',encoding="unicode")
                 experienceRequirements = requirements_str
-                job["experienceRequirements"] = experienceRequirements 
+                job["experienceRequirements"] = experienceRequirements
+            else:
+                job["experienceRequirements"] = ""
         #
         if first_requirement.strip() != "":
+            print("hehe")
             std_description = description_dom.xpath("//*[contains(text(),'Mô tả')]/following-sibling::*")
             std_description_str = ""
             i = 0
@@ -275,11 +282,25 @@ class Crawler(Spider):
                 i += 1
             job["description"] = std_description_str
         #sua loi out of range
+        print("exp ",job["experienceRequirements"])
+        print("be ", job["jobBenefits"] == "")
         if job["experienceRequirements"] == "" or job["jobBenefits"] == "":
             job["jobBenefits"] = seperate.extract_info(inital_description,"quyền lợi")
-            #job["description"] = seperate.extract_info(inital_description,"mô tả")
-            #job["experienceRequirements"] = seperate.extract_info(inital_description,"yêu cầu")
-            
+            job["description"] = seperate.extract_info(inital_description,"mô tả")
+            job["experienceRequirements"] = seperate.extract_info(inital_description,"yêu cầu")
+        if job["experienceRequirements"] == "" and job["jobBenefits"] == "" and job["description"] == "":
+            #print("lala")
+            meta_description = dom.xpath("//meta[@name='description']")
+            for temp in meta_description:
+                job["jobBenefits"] = ""
+                job["description"] = temp.attrib['content']
+                job["experienceRequirements"] = temp.attrib['content']
+            '''
+            print(meta_description[0])
+            content = meta_description[0].attrib['content']
+            print("lalal2")
+            print(content)
+            '''
         #lay so luong tuyen dung:
         job_available_node = dom.xpath("//div[@id='col-job-right']//div[@id='box-info-job']//div[@class='job-info-item']//*[contains(text(),'cần tuyển')]/following-sibling::*[1]")
         if(len(job_available_node) == 0):
@@ -312,5 +333,6 @@ class Crawler(Spider):
 
     def close(self, spider, reason):
         print("Number of english items: ", self.no_not_vi_doc)
+        print("Number of broken items: ", self.home)
         print('Number of duplicated items: %d' % self.no_duplicated_items)
         print("Finished!")
