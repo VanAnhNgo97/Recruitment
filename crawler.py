@@ -13,6 +13,7 @@ from utils.remove_similar_data.remove_similar_data import DataReduction
 from setting import *
 import pandas as pd
 from langdetect import detect
+import seperate
 
 
 
@@ -260,6 +261,17 @@ class Crawler(Spider):
                 std_description_str = std_description_str + des_str
                 i += 1
             job["description"] = std_description_str
+        if job["experienceRequirements"] == "" or job["jobBenefits"] == "":
+            job["jobBenefits"] = seperate.extract_info(inital_description,"quyền lợi")
+            job["description"] = seperate.extract_info(inital_description,"mô tả")
+            job["experienceRequirements"] = seperate.extract_info(inital_description,"yêu cầu")
+        if job["experienceRequirements"] == "" and job["jobBenefits"] == "" and job["description"] == "":
+            #print("lala")
+            meta_description = dom.xpath("//meta[@name='description']")
+            for temp in meta_description:
+                job["jobBenefits"] = ""
+                job["description"] = temp.attrib['content']
+                job["experienceRequirements"] = temp.attrib['content']
 
         #lay so luong tuyen dung:
         job_available_node = dom.xpath("//div[@id='col-job-right']//div[@id='box-info-job']//div[@class='job-info-item']//*[contains(text(),'cần tuyển')]/following-sibling::*[1]")
@@ -268,7 +280,7 @@ class Crawler(Spider):
         if(len(job_available_node) > 0):
             job_available_text = job_available_node[0].text
             if "không giới hạn" in job_available_text.lower():
-                job["totalJobOpenings"] = 50
+                job["totalJobOpenings"] = 10
             elif "người" in job_available_text.lower():
                 num_job_available = (job_available_text.split(" ")[0])
                 if(num_job_available.isdigit()):

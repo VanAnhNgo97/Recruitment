@@ -8,6 +8,7 @@ import pandas as pd
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from bson.objectid import ObjectId
+import bson
 
 class JobStatistic(object):
 	def __init__(self,ini_category,ini_year,ini_month,ini_amount):
@@ -15,6 +16,8 @@ class JobStatistic(object):
 		self.category = ini_category
 		self.year = ini_year
 		self.month = ini_month
+		day_str = str(ini_year) + '-' + str(ini_month) + '-' + str(1)
+		self.day = pd.to_datetime(day_str)
 		self.amount = ini_amount
 		super(JobStatistic, self).__init__()
 
@@ -32,8 +35,8 @@ class JobUitl(object):
 		self.category_list = [0]
 		self.database = pymongo.MongoClient(MONGO_URI)[MONGO_DATABASE]
 		#self.collection = pymongo.MongoClient(MONGO_URI)[MONGO_DATABASE][self.TEMP_MONGO_COLLECTION]
-		self.collection = self.database["topcv_test"]
-
+		self.collection = self.database["topcv_real"]
+		
 		for k,v in CAREER_CODE_DICT.items():
 			self.category_list.append(int(v))
 		
@@ -61,15 +64,19 @@ class JobUitl(object):
 			#print("from date ", from_date)
 			#print("to date ", to_date)
 			#
+
 			for category in self.category_list:
-				amount = self.collection.find({
-						'occupationalCategory' : category,
+				amount = 0
+				jobs = self.collection.find({
+						'occupationalCategory' : 8,
 						'datePosted' :{
 							'$lt' : to_date,
 							'$gte' : from_date
 						}
-					}).count()
-				#print(amount)
+				})
+				for job in jobs:
+					amount = amount + job['totalJobOpenings']
+				
 				current_year = from_date.year
 				current_month = from_date.month
 				statisctic_doc = JobStatistic(category,current_year,current_month,amount)
@@ -109,12 +116,12 @@ class JobUitl(object):
 		return jobs[0]['datePosted']
 
 	def save_doc(self,statistic_doc):
-		collection = self.database["CategoryStatistic"]
+		collection = self.database["MonthlyCategoryStatistic"]
 		data = statistic_doc.__dict__
 		collection.insert_one(data)
 
 	def get_amount_single_category(self,year,month,category):
-		collection = self.database["CategoryStatistic"]
+		collection = self.database["MonthlyCategoryStatistic"]
 		statisctic_doc = collection.find({
 			'year' : year,
 			'month' : month,
@@ -123,14 +130,19 @@ class JobUitl(object):
 		return statisctic_doc["amount"]
 
 	def update_job_statistic(self):
-		collection = self.database["CategoryStatistic"]
+		collection = self.database["MonthlyCategoryStatistic"]
 		collection.drop()
-		new_collection = self.database["CategoryStatistic"]
+		new_collection = self.database["MonthlyCategoryStatistic"]
 		self.statistic_by_category()
 		#statisctic_doc = JobStatistic(8,2019,8,0)
 		#self.save_doc(statisctic_doc)
-
-
+	def statistic_category(self,category):
+		collection = self.database["MonthlyCategoryStatistic"]
+		monthly_jobs_amount = collection.find({
+			'category' : category
+			},{'day' : 1, 'amount' : 1, '_id' : 0})
+		print(monthly_jobs_amount[0])
+		return monthly_jobs_amount
 
 
 job_util = JobUitl()
@@ -142,7 +154,8 @@ for i in job_util.category_list:
 	print(i)
 '''
 #job_util.statistic_by_category()
-job_util.update_job_statistic()
+#job_util.update_job_statistic()
+amount_list = job_util.statistic_category(8)
 
 
 

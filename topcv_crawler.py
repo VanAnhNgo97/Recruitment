@@ -73,7 +73,8 @@ class Crawler(Spider):
         job_urls = []
         default_url = "https://www.topcv.vn/viec-lam/hn-money-lover-tuyen-ios-developer/"
         #max = 161477
-        for i in range(70001,100000):
+        #loi 100001,130000
+        for i in range(155001,161477):
             job_url = default_url + str(i) + ".html"
             yield Request(url=get_correct_url(job_url, response), callback=self.parse_job)
         '''
@@ -308,7 +309,7 @@ class Crawler(Spider):
         if(len(job_available_node) > 0):
             job_available_text = job_available_node[0].text
             if "không giới hạn" in job_available_text.lower():
-                job["totalJobOpenings"] = 50
+                job["totalJobOpenings"] = 10
             elif "người" in job_available_text.lower():
                 num_job_available = (job_available_text.split(" ")[0])
                 if(num_job_available.isdigit()):
