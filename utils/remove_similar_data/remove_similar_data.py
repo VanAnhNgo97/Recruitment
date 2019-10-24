@@ -2,6 +2,8 @@ from pyvi import ViTokenizer
 import re
 from py_stringmatching.similarity_measure.soft_tfidf import SoftTfIdf
 import math
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 
 class DataReduction:
@@ -17,6 +19,7 @@ class DataReduction:
             y_split = []
             for i in range(no_fields):
                 y_split.append(self.word_nomalize(self.word_split(y[i])))
+            y_split.append(y[-2])
             y_split.append(y[-1])
             self.Y_normalize.append(y_split)
             #vananh
@@ -45,34 +48,59 @@ class DataReduction:
         x_normalize = []
         for i in range(self.no_fields):
             x_normalize.append(self.word_nomalize(self.word_split(x[i])))
+        x_normalize.append(x[-2])
         x_normalize.append(x[-1])
+        '''
+        print("x_normalize")
+        print(x_normalize)
+        print("length y normalize")
+        print(len(self.Y_normalize))
+        print("y normalize 0")
+        print(self.Y_normalize[0])
+        '''
         #
 
         # size filtering
         Y_size_filtering = self.size_filtering(x_normalize, self.Y_normalize)
-        #print(len(Y_size_filtering))
+        '''
+        print("filtering")
+        print(len(Y_size_filtering))
+        '''
         # position filtering
         Y_candidates = self.position_filtering(x_normalize, Y_size_filtering)
-        #print(len(Y_candidates))
+        '''
+        print("y candidates")
+        print(len(Y_candidates))
+        
+        print("y_candidate 0")
+        '''
+        #print(Y_candidates[0])
         # check match
         flag = False  # flag check x match in Y
         for y in Y_candidates:
             inner_flag = True
             for i in range(self.no_fields):
+                #print("raw score i ",i)
+                #print(self.soft_tf_idf[i].get_raw_score(x_normalize[i], y[i]))
                 if self.soft_tf_idf[i].get_raw_score(x_normalize[i], y[i]) < self.similarity_threshold:
                     inner_flag = False
                     break
             #print(x_normalize[-1])
             #print(y[-1])
             #print("------------------------")
+            #kiem tra truong ngay thang neu data bi trung
             if inner_flag:
                 #flag = True
-                #vananh kiem tra truong ngay thang
-                if x_normalize[-1] == y[-1]:
-                    flag = True
-                else:
+                check_date_posted = self.is_over_range(x_normalize[-2],y[-2],1)
+                check_valid_through = self.is_over_range(x_normalize[-1],y[-1],1)
+                #vananh kiem tra truong ngay thang neu trung thi return luon
+                
+                if check_date_posted and check_valid_through:
                     flag = False
-
+                else:
+                    flag = True
+                    break
+                
         return flag
     #tach tu tieng viet
     @staticmethod
@@ -93,8 +121,12 @@ class DataReduction:
         return inverted
 
     def size_filtering(self, x, Y):
-        up_bound = [len(x_) / self.jaccard_measure for x_ in x]
-        down_bound = [len(x_) * self.jaccard_measure for x_ in x]
+        up_bound = [len(x_) / self.jaccard_measure for x_ in x[:-2]]
+        '''
+        print("up_bound")
+        print(up_bound)
+        '''
+        down_bound = [len(x_) * self.jaccard_measure for x_ in x[:-2]]
         Y_size_filtering = []
 
         for y in Y:
@@ -168,6 +200,14 @@ class DataReduction:
             Y_set_id.intersection_update(y_filter_id)
 
         return [Y[ids[i]] for i in Y_set_id]
+
+    def is_over_range(self,from_date,to_date,range_month):
+        expire_date = from_date + relativedelta(months=range_month)
+        if to_date >= expire_date:
+            return True
+        else:
+            return False
+
 
     @staticmethod
     def sort_by_frequency(inverted_index, arr):

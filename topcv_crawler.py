@@ -315,9 +315,9 @@ class Crawler(Spider):
                 if(num_job_available.isdigit()):
                     job["totalJobOpenings"] = int(num_job_available)
             else:
-                job["totalJobOpenings"] = 1
+                job["totalJobOpenings"] = 2
         else:
-            job["totalJobOpenings"] = 1
+            job["totalJobOpenings"] = 2
         #print(job["totalJobOpenings"])
         return job
     @staticmethod
