@@ -93,8 +93,8 @@ class TopcvNormailization(object):
 	
 	def copy_data(self):
 		no_duplicated = 0
-		i = 0
-		while i < 5: 
+		i = 119
+		while i < 125: 
 			old_data = self.oldCollection.find({}).sort([('_id',-1)]).skip(i*100).limit(100)
 			for job in old_data:
 				data_reduction = self.get_data_reduction()

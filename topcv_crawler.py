@@ -74,7 +74,7 @@ class Crawler(Spider):
         default_url = "https://www.topcv.vn/viec-lam/hn-money-lover-tuyen-ios-developer/"
         #max = 161477
         #loi 100001,130000
-        for i in range(155001,161477):
+        for i in range(2,10):
             job_url = default_url + str(i) + ".html"
             yield Request(url=get_correct_url(job_url, response), callback=self.parse_job)
         '''
@@ -179,9 +179,13 @@ class Crawler(Spider):
         result['url'] = url
 
         # Check duplicate
+        #phai ktra nhung tin da insert truoc
         if self.data_reduction.is_match(self.get_filter_data(job)):
             self.no_duplicated_items += 1
             result = None
+        else:
+            self.data.append(self.get_filter_data(job))
+            self.data_reduction = DataReduction(3,self.data)
 
         return result
 
@@ -204,11 +208,11 @@ class Crawler(Spider):
         collection = pymongo.MongoClient(uri)[database][collection]
         #Lay ra ten, noi tuyen dung, dia diem, ko lay id cua danh sach tuyen dung
         jobs = list(collection.find({},
-                                    {'title': 1, 'hiringOrganization.name': 1, 'jobLocation.address.addressRegion': 1, 'validThrough' : 1,
+                                    {'title': 1, 'hiringOrganization.name': 1, 'jobLocation.address.addressRegion': 1, 'validThrough' : 1, 'datePosted' : 1,
                                      '_id': 0}))
-        data = [self.get_filter_data(job) for job in jobs]
+        self.data = [self.get_filter_data(job) for job in jobs]
 
-        data_reduction = DataReduction(3, data)
+        data_reduction = DataReduction(3, self.data)
         return data_reduction
 
     @staticmethod
@@ -222,10 +226,12 @@ class Crawler(Spider):
         #vananh
         #validThrough = 
         #trong db la date => chuyen ve str
-        date_str = job['validThrough']
-        validThroughDate = pd.to_datetime(date_str)
-        valid_through = str(validThroughDate.year) + "-" + str(validThroughDate.month) + "-" + str(validThroughDate.day)
-        return [title, hiring_organization_name, address_region, valid_through]
+        valid_through = job['validThrough']
+        #validThroughDate = pd.to_datetime(date_str)
+        #valid_through = str(validThroughDate.year) + "-" + str(validThroughDate.month) + "-" + str(validThroughDate.day)
+        date_posted = job['datePosted']
+        return [title, hiring_organization_name, address_region, date_posted,valid_through]
+        
     #van anh
     #vananh
     @staticmethod
