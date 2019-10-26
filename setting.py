@@ -13,6 +13,7 @@ MONGO_URI = 'mongodb://localhost:27017/'
 MONGO_DATABASE = 'recruitment_1910'
 MONGO_COLLECTION = 'topcv_2'
 
+
 SCRAPY_CONFIG = {
     'DUPEFILTER_CLASS': 'scrapy.dupefilters.BaseDupeFilter',
     'DEPTH_PRIORITY': 1,
@@ -110,12 +111,16 @@ WEB_LIST = {
         "next_page": "//*[@id='box-job-result']/div[2]/ul/li[last()]/a",
         "job_url": "//*[@id='box-job-result']/div[1]/div/div/div[2]/h4/a"
     },
-   
 }
 '''
 
 
 WEB_LIST = {
+    "topcv": {
+        "start_url": "https://www.topcv.vn/viec-lam/moi-nhat.html?utm_source=click-search-job&utm_medium=page-job&utm_campaign=tracking-job",
+        "next_page": "//*[@id='box-job-result']/div[2]/ul/li[last()]/a",
+        "job_url": "//*[@id='box-job-result']/div[1]/div/div/div[2]/h4/a"
+    },
     "Anphabe.com": {
         "start_url": "https://www.anphabe.com/big-jobs/search/",
         "next_page": "//*[@id='block-system-main']/div/div/div/div/div/div[3]/ul/li[@class='pager-next']/a",

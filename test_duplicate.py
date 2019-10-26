@@ -112,5 +112,26 @@ class TopcvNormailization(object):
 		for job in old_data:
 			self.newCollection.insert_one(job)
 
-new_topcv = TopcvNormailization()
-new_topcv.copy_data()
+#new_topcv = TopcvNormailization()
+#new_topcv.copy_data()
+'''
+def add_job(self,job):
+	self.size = self.size + 1
+	y_split = []
+    for i in range(self.no_fields):
+        y_split.append(self.word_nomalize(self.word_split(y[i])))
+    y_split.append(y[-2])
+    y_split.append(y[-1])
+    self.Y_normalize.append(y_split)
+'''
+def invert_index(str_list):
+    inverted = {}
+    for i, s in enumerate(str_list):
+        for word in s:
+            locations = inverted.setdefault(word, [])
+            locations.append(i)
+    return inverted
+
+str_list = [["Lập trình viên phần mềm"], ["Kiểm toán phần xuất"]]
+index = invert_index(str_list)
+print(index)

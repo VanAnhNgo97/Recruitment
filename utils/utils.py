@@ -94,17 +94,5 @@ def date_normalize(date):
     else:
         return '-'.join(year_month_date)
 
-#van anh
-def convert_to_standard(job):
-    try:
-        description = job.get("description")
-        jobBenefits_header = "<h2>Quyền lợi được hưởng</h2>"
-        experienceRequirements_header = "<h2>Yêu cầu ứng viên</h2>"
-        if jobBenefits_header in description:
-            pass
 
-        
-    except Exception as e:
-        print("exception")
-        return job
     

@@ -164,12 +164,18 @@ class SchemaCrawler(Spider):
                         #dich tai day
                         vi_lang = SchemaCrawler.is_vi_language(job["description"])
                         if not vi_lang:
+                            print("tieng anh")
+                            print(response.url)
+                            print("-----")
                             return result
                         #
                         if SchemaCrawler.currentDomain == "topcv":
                             temp_job = job
                             job = SchemaCrawler.seperate_attributes_topcv(temp_job,dom)
                             #lay ra so luong tuyendung
+                        elif SchemaCrawler.currentDomain == "timviecnhanh":
+                            temp_job = job
+                            job = SchemaCrawler.seperate_attributes_timviecnhanh(temp_job,dom)
 
                         #print(job)
                     result.append(job)
@@ -254,6 +260,45 @@ class SchemaCrawler(Spider):
             job["totalJobOpenings"] = 1
         #print(job["totalJobOpenings"])
         return job
+
+    @staticmethod
+    def seperate_attributes_timviecnhanh(job,dom):
+        '''
+        https://www.timviecnhanh.com/dxmbhn/nhan-vien-kinh-doanh-bds-kv-quan-4-quan-7-nha-be-dat-xanh-mien-bac-ho-chi-minh-id4352813.html
+        '''
+        jobOpenings = 0
+        if "totalJobOpenings" not in job:
+            job_available_values = dom.xpath("//*[@id='left-content']//*[contains(text(),'Số lượng tuyển dụng')]/parent::*/text()")
+            for value in job_available_values:
+                #print("value")
+                #print(value)
+                temp = value.strip()
+                if temp != "" and temp.isdigit():
+                    job["totalJobOpenings"] = int(temp)
+                    jobOpenings = job["totalJobOpenings"]
+                elif temp != "" and "giới hạn" in temp:
+                    job["totalJobOpenings"] = 10
+                    jobOpenings = job["totalJobOpenings"]
+            if jobOpenings == 0:
+                job_available_values = dom.xpath("//div[@class='info-left']//*[contains(text(),'Số lượng cần tuyển')]/parent::*/text()")
+                for value in job_available_values:
+                    #print("value")
+                    #print(value)
+                    temp = value.strip()
+                    if temp != "" and temp.isdigit():
+                        job["totalJobOpenings"] = int(temp)
+                        jobOpenings = job["totalJobOpenings"]
+                    elif temp != "" and "giới hạn" in temp:
+                        job["totalJobOpenings"] = 10
+                        jobOpenings = job["totalJobOpenings"]
+            if jobOpenings == 0:
+                job["totalJobOpenings"] = 2
+        #print("timviecnhanh")
+        #print(job["totalJobOpenings"])
+        #print(job)
+        return job
+
+
 
     @staticmethod
     def is_vi_language(raw_text):

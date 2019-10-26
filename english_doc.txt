@@ -546,3 +546,145 @@ Traceback (most recent call last):
   File "/home/vananh/VanAnh/DoAn/Recruitment/crawler.py", line 229, in seperate_attributes_topcv
     first_benefit = etree.tostring(raw_benefits[0],method='html',encoding="unicode")
 IndexError: list index out of range
+
+
+========
+2019-10-26 18:03:22 [scrapy.core.scraper] ERROR: Spider error processing <GET https://www.topcv.vn/viec-lam/lap-trinh-vien-i0s/60017.html> (referer: https://www.topcv.vn/viec-lam/moi-nhat.html?utm_source=click-search-job&utm_medium=page-job&utm_campaign=tracking-job)
+Traceback (most recent call last):
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/utils/defer.py", line 102, in iter_errback
+    yield next(it)
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/offsite.py", line 29, in process_spider_output
+    for x in result:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/referer.py", line 339, in <genexpr>
+    return (_set_referer(r) for r in result or ())
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/urllength.py", line 37, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/depth.py", line 58, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/VanAnh/DoAn/Recruitment/topcv_crawler.py", line 110, in parse_job_json
+    job["language"] = language
+TypeError: 'NoneType' object does not support item assignment
+2019-10-26 18:03:31 [scrapy.core.scraper] ERROR: Spider error processing <GET https://www.topcv.vn/viec-lam/nhan-vien-thiet-ke-noi-that/60070.html> (referer: https://www.topcv.vn/viec-lam/moi-nhat.html?utm_source=click-search-job&utm_medium=page-job&utm_campaign=tracking-job)
+Traceback (most recent call last):
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/utils/defer.py", line 102, in iter_errback
+    yield next(it)
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/offsite.py", line 29, in process_spider_output
+    for x in result:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/referer.py", line 339, in <genexpr>
+    return (_set_referer(r) for r in result or ())
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/urllength.py", line 37, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/depth.py", line 58, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/VanAnh/DoAn/Recruitment/topcv_crawler.py", line 110, in parse_job_json
+    job["language"] = language
+TypeError: 'NoneType' object does not support item assignment
+2019-10-26 18:03:32 [scrapy.core.scraper] ERROR: Spider error processing <GET https://www.topcv.vn/viec-lam/nhan-vien-dao-tao/60076.html> (referer: https://www.topcv.vn/viec-lam/moi-nhat.html?utm_source=click-search-job&utm_medium=page-job&utm_campaign=tracking-job)
+Traceback (most recent call last):
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/utils/defer.py", line 102, in iter_errback
+    yield next(it)
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/offsite.py", line 29, in process_spider_output
+    for x in result:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/referer.py", line 339, in <genexpr>
+    return (_set_referer(r) for r in result or ())
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/urllength.py", line 37, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/depth.py", line 58, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/VanAnh/DoAn/Recruitment/topcv_crawler.py", line 110, in parse_job_json
+    job["language"] = language
+TypeError: 'NoneType' object does not support item assignment
+2019-10-26 18:03:33 [scrapy.core.scraper] ERROR: Spider error processing <GET https://www.topcv.vn/viec-lam/chuyen-vien-marketing/60073.html> (referer: https://www.topcv.vn/viec-lam/moi-nhat.html?utm_source=click-search-job&utm_medium=page-job&utm_campaign=tracking-job)
+Traceback (most recent call last):
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/utils/defer.py", line 102, in iter_errback
+    yield next(it)
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/offsite.py", line 29, in process_spider_output
+    for x in result:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/referer.py", line 339, in <genexpr>
+    return (_set_referer(r) for r in result or ())
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/urllength.py", line 37, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/depth.py", line 58, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/VanAnh/DoAn/Recruitment/topcv_crawler.py", line 110, in parse_job_json
+    job["language"] = language
+TypeError: 'NoneType' object does not support item assignment
+2019-10-26 18:03:35 [scrapy.core.scraper] ERROR: Spider error processing <GET https://www.topcv.vn/viec-lam/chuyen-vien-nhan-su/60091.html> (referer: https://www.topcv.vn/viec-lam/moi-nhat.html?utm_source=click-search-job&utm_medium=page-job&utm_campaign=tracking-job)
+Traceback (most recent call last):
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/utils/defer.py", line 102, in iter_errback
+    yield next(it)
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/offsite.py", line 29, in process_spider_output
+    for x in result:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/referer.py", line 339, in <genexpr>
+    return (_set_referer(r) for r in result or ())
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/urllength.py", line 37, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/depth.py", line 58, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/VanAnh/DoAn/Recruitment/topcv_crawler.py", line 110, in parse_job_json
+    job["language"] = language
+TypeError: 'NoneType' object does not support item assignment
+2019-10-26 18:03:36 [scrapy.core.scraper] ERROR: Spider error processing <GET https://www.topcv.vn/viec-lam/giam-sat-ban-hang/60093.html> (referer: https://www.topcv.vn/viec-lam/moi-nhat.html?utm_source=click-search-job&utm_medium=page-job&utm_campaign=tracking-job)
+Traceback (most recent call last):
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/utils/defer.py", line 102, in iter_errback
+    yield next(it)
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/offsite.py", line 29, in process_spider_output
+    for x in result:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/referer.py", line 339, in <genexpr>
+    return (_set_referer(r) for r in result or ())
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/urllength.py", line 37, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/depth.py", line 58, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/VanAnh/DoAn/Recruitment/topcv_crawler.py", line 110, in parse_job_json
+    job["language"] = language
+TypeError: 'NoneType' object does not support item assignment
+
