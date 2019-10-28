@@ -79,7 +79,8 @@ class Crawler(Spider):
         #loi 100001,130000
         #50015
         #loi 50015,60015 
-        for i in range(70018,80018):
+        #loi 105018,110018
+        for i in range(140028,150028):
             job_url = default_url + str(i) + ".html"
             yield Request(url=get_correct_url(job_url, response), callback=self.parse_job)
         
@@ -208,8 +209,8 @@ class Crawler(Spider):
                 result = None
                 return result
             else:
-                self.inserted_data.append(self.get_filter_data(job))
-                self.inserted_data_reduction = DataReduction(3,self.inserted_data)
+                #self.inserted_data.append(self.get_filter_data(job))
+                self.inserted_data_reduction.add_job(self.get_filter_data(job))
         return result
 
     @staticmethod

@@ -65,6 +65,7 @@ class Crawler(Spider):
                 self.data_reduction = self.get_data_reduction(MONGO_URI, MONGO_DATABASE, MONGO_COLLECTION)
                 self.inserted_data = []
                 self.inserted_data_reduction = DataReduction(3,self.inserted_data)
+                #self.eng_collection = pymongo.MongoClient(MONGO_URI)[MONGO_DATABASE]["english_job"]
         else:
             raise Exception('Context file name not existed: ' + get_context_file(self.domain))
         yield Request(url=self.context['start_url'], callback=self.parse)
@@ -73,11 +74,8 @@ class Crawler(Spider):
         next_page = response.xpath(self.context['selectors']['next_page'] + '/@href').get()
         #job_urls = response.xpath(self.context['selectors']['job_url'] + '/@href').getall()
         job_urls = []
-        default_url = "https://www.topcv.vn/viec-lam/hn-money-lover-tuyen-ios-developer/"
-        #max = 161477
-        #loi 100001,130000
-        #6084
-        for i in range(30015,50015):
+        default_url = "https://www.timviecnhanh.com/tuyen-nhan-vien-phuc-vu-nha-hang-part-time-ho-chi-minh-"
+        for i in range(4302939,4302940):
             job_url = default_url + str(i) + ".html"
             yield Request(url=get_correct_url(job_url, response), callback=self.parse_job)
         
@@ -96,14 +94,25 @@ class Crawler(Spider):
         jobs = self.get_json_from_response_json(response)
         job_selectors = self.context['selectors']['job_selectors']
         for job in jobs:
+            #neu ko co industry thi tim lan can
+            if "industry" not in job:
+                job["industry"] = self.get_from_neighbor(response)
+            #print(job)
+            language = job["language"]
             job = self.change_to_right_form(job)
+            '''
             if job_selectors is not None:
                 for field, selector in job_selectors.items():
                     print(selector)
                     job[field] = ','.join(
                         text.strip() for text in response.xpath(selector + '/text()').extract() if text is not None)
                 job = self.normalize(job, job_url)
-                yield job
+                if job is not None:
+                    job["language"] = language
+                    print(job)
+                    yield job
+            '''
+                
 
     def parse_job_microdata(self, response):
         job_url = response.request.url
@@ -125,31 +134,63 @@ class Crawler(Spider):
 
         result = []
         #vananh
+        ''' #for topcv
         if response.url == "https://www.topcv.vn/viec-lam":
             Crawler.home = Crawler.home + 1
             return result
+        '''
         #
         dom = etree.HTML(response.body.decode("utf8"))
+        #for timviecnhanh
+        raw_title = dom.xpath("//title/text()")
+        if raw_title.lower() == "error":
+            Crawler.home = Crawler.home + 1
+            return result
         json_node = dom.xpath("//script[text()]")
+        extract_job = None
         for node in json_node:
             try:
                 job = json.loads(node.text, strict=False)
                 if job['@type'] == 'JobPosting':
                     #van anh
                     #dich tai day
+                    extract_job = job
                     vi_lang = Crawler.is_vi_language(job['description'])
                     if not vi_lang:
-                        Crawler.no_not_vi_doc = Crawler.no_not_vi_doc + 1
-                        return result
-                        #
-                    if Crawler.currentDomain == "topcv":
-                        temp_job = job
-                        print(response.url)
-                        job = Crawler.seperate_attributes_topcv(temp_job,dom)
+                        if Crawler.currentDomain == "topcv":
+                            temp_job = job
+                            print(response.url)
+                            job = Crawler.seperate_attributes_topcv(temp_job,dom,False)
+                            Crawler.no_not_vi_doc = Crawler.no_not_vi_doc + 1
+                            result.append(job)
+                            return result
+                        elif Crawler.currentDomain == "timviecnhanh":
+                            temp_job = job
+                            print(response.url)
+                            job = Crawler.extract_job_openings_tvn(temp_job,dom,False)
+                            Crawler.no_not_vi_doc = Crawler.no_not_vi_doc + 1
+                            result.append(job)
+                            return result
+                    else:
+                        if Crawler.currentDomain == "topcv":
+                            temp_job = job
+                            print(response.url)
+                            job = Crawler.seperate_attributes_topcv(temp_job,dom)
+                        elif Crawler.currentDomain == "timviecnhanh":
+                            temp_job = job
+                            print("tvn")
+                            print(response.url)
+                            job = Crawler.extract_job_openings_tvn(temp_job,dom)
+
                     result.append(job)
 
             except (ValueError, TypeError):
                 pass
+        if extract_job is None:
+            if Crawler.currentDomain == "timviecnhanh":
+                job = Crawler.seperate_attributes_timviecnhanh(dom)
+                if job is not None:
+                    result.append(job)
         return result
 
     def get_json_from_response_microdata(self, response):
@@ -159,6 +200,7 @@ class Crawler(Spider):
 
     def change_to_right_form(self, job):
         norm_job = self.standard_sample.copy()
+        #print(norm_job)
         flatten_job = flatten_dict(job)
 
         for key, value in self.map_schema.items():
@@ -175,7 +217,8 @@ class Crawler(Spider):
                     attribute[value[-1]] = real_value[0]
                 else:
                     attribute[value[-1]] = real_value
-
+        #print("norm_job")
+        #print(norm_job)
         return norm_job
 
     def normalize(self, job, url):
@@ -194,8 +237,8 @@ class Crawler(Spider):
                 result = None
                 return result
             else:
-                self.inserted_data.append(self.get_filter_data(job))
-                self.inserted_data_reduction = DataReduction(3,self.inserted_data)
+                #self.inserted_data.append(self.get_filter_data(job))
+                self.inserted_data_reduction.add_job(self.get_filter_data(job))
         return result
 
     @staticmethod
@@ -244,7 +287,28 @@ class Crawler(Spider):
     #van anh
     #vananh
     @staticmethod
-    def seperate_attributes_topcv(job,dom):
+    def seperate_attributes_topcv(job,dom,is_vi=True):
+        '''
+        if not is_vi:
+            #lay so luong tuyen dung:
+            job_available_node = dom.xpath("//div[@id='col-job-right']//div[@id='box-info-job']//div[@class='job-info-item']//*[contains(text(),'cần tuyển')]/following-sibling::*[1]")
+            if(len(job_available_node) == 0):
+                job_available_node = dom.xpath("///*[@data-original-title='Số lượng cần tuyển']")
+            if(len(job_available_node) > 0):
+                job_available_text = job_available_node[0].text
+                if "không giới hạn" in job_available_text.lower():
+                    job["totalJobOpenings"] = 10
+                elif "người" in job_available_text.lower():
+                    num_job_available = (job_available_text.split(" ")[0])
+                    if(num_job_available.isdigit()):
+                        job["totalJobOpenings"] = int(num_job_available)
+                else:
+                    job["totalJobOpenings"] = 2
+            else:
+                job["totalJobOpenings"] = 2
+            job["language"] = "en"
+            return job
+        '''
         inital_description = job['description']
         description_dom = etree.HTML(inital_description)
         first_benefit = ""
@@ -333,8 +397,64 @@ class Crawler(Spider):
                 job["totalJobOpenings"] = 2
         else:
             job["totalJobOpenings"] = 2
+        
+        if is_vi:
+            job["language"] = "vi"
+        else:
+            job["language"] = "en"
+
         #print(job["totalJobOpenings"])
         return job
+    @staticmethod
+    def seperate_attributes_timviecnhanh(dom):
+        job = {}
+        meta_description = dom.xpath("//meta[@property='og:description']")
+        for temp in meta_description:
+            job["jobBenefits"] = ""
+            job["description"] = temp.attrib['content']
+            job["experienceRequirements"] = ""
+        vi_lang = Crawler.is_vi_language(job['description'])
+        if not vi_lang:
+            Crawler.no_not_vi_doc = Crawler.no_not_vi_doc + 1
+            return None
+        job["language"] = "vi"
+        raw_title = dom.xpath("//title/text()")
+        raw_title = raw_title.strip()
+        title_list = raw_title.split("|")
+        if len(title_list) > 1:
+            raw_title = title_list[0].strip()
+        job["title"] = raw_title
+        job["validThrough"] = seperate.extract_info_tvn(job["description"],"ngày hết hạn")
+        job["hiringOrganization"]["name"] = seperate.extract_info_tvn(job["description"],"công ty")
+        raw_salary = seperate.extract_info_tvn(job["description"],"lương")
+        job["baseSalary"] = seperate.extract_salary_tvn(raw_salary)
+        job["totalJobOpenings"] = 2
+        job["jobLocation"]["address"]["addressRegion"] = "Việt Nam"
+        job["jobLocation"]["address"]["streetAddress"] = "Việt Nam"
+        job["jobLocation"]["address"]["addressCountry"] = "Việt Nam"
+        return job
+
+    @staticmethod
+    def extract_job_openings_tvn(job,dom):
+        jobOpenings = 0
+        if "totalJobOpenings" not in job:
+            job_available_values = dom.xpath("//*[@id='left-content']//*[contains(text(),'Số lượng tuyển dụng')]/parent::*/text()")
+            if len(job_available_values) == 0:
+                job_available_values = dom.xpath("//div[@class='info-left']//*[contains(text(),'Số lượng cần tuyển')]/parent::*/text()")
+            for value in job_available_values:
+                #print("value")
+                #print(value)
+                temp = value.strip()
+                if temp != "" and temp.isdigit():
+                    job["totalJobOpenings"] = int(temp)
+                    jobOpenings = job["totalJobOpenings"]
+                elif temp != "" and "giới hạn" in temp:
+                    job["totalJobOpenings"] = 10
+                    jobOpenings = job["totalJobOpenings"]
+            if jobOpenings == 0:
+                job["totalJobOpenings"] = 2
+        return job
+
     @staticmethod
     def is_vi_language(raw_text):
         tag_re = re.compile(r'<[^>]+>')
@@ -345,6 +465,17 @@ class Crawler(Spider):
             return False
         return True
 
+    def get_from_neighbor(self, response):
+        dom = etree.HTML(response.body.decode("utf8"))
+        neighbor_urls = dom.xpath("//*[@id='job-hot-content']//a[1]")
+        result = []
+        for neighbor_url in neighbor_urls:
+            url = neighbor_url.attrib["href"]
+            result = Request(url=get_correct_url(url, response), callback=self.get_job_from_neighbor)
+        return result[0]["industry"]
+    def get_job_from_neighbor(self,response):
+        result = self.get_json_from_response_json(response)
+        return result
     #
 
     def close(self, spider, reason):

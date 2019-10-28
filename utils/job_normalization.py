@@ -32,8 +32,12 @@ def normalize_job(job):
     job['baseSalary']['minValue'] = normalize_salary(job['baseSalary']['minValue'])
     job['baseSalary']['maxValue'] = normalize_salary(job['baseSalary']['maxValue'])
     #vananh
-    job['datePosted'] = normalize_date(job['datePosted'])
     job['validThrough'] = normalize_date(job['validThrough'])
+    if job['datePosted'] != "":
+        job['datePosted'] = normalize_date(job['datePosted'])
+    else:
+        job['datePosted'] = job['validThrough'] - relativedelta(months=1)
+    
     job['validThrough'] = normalize_date_range(job['datePosted'],job['validThrough'])
     if job['baseSalary']['maxValue'] == 0:
         job['baseSalary']['maxValue'] = job['baseSalary']['minValue']

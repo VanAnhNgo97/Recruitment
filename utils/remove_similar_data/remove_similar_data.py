@@ -22,24 +22,18 @@ class DataReduction:
             y_split.append(y[-2])
             y_split.append(y[-1])
             self.Y_normalize.append(y_split)
-            #vananh
-            #
-            
-
         # Build index
         self.Y_index = []
-        Y_fields = [[] for i in range(no_fields)]
+        self.Y_fields = [[] for i in range(no_fields)]
         for y in self.Y_normalize:
             for i in range(no_fields):
-                Y_fields[i].append(y[i])
-
+                self.Y_fields[i].append(y[i])
         for i in range(no_fields):
-            self.Y_index.append(self.invert_index(Y_fields[i]))
-
+            self.Y_index.append(self.invert_index(self.Y_fields[i]))
         # Soft TF/IDF models
         self.soft_tf_idf = []
         for i in range(no_fields):
-            self.soft_tf_idf.append(SoftTfIdf(Y_fields[i]))
+            self.soft_tf_idf.append(SoftTfIdf(self.Y_fields[i]))
 
     def is_match(self, x):
         # normalize x
@@ -71,7 +65,6 @@ class DataReduction:
         '''
         print("y candidates")
         print(len(Y_candidates))
-        
         print("y_candidate 0")
         '''
         #print(Y_candidates[0])
@@ -80,8 +73,6 @@ class DataReduction:
         for y in Y_candidates:
             inner_flag = True
             for i in range(self.no_fields):
-                #print("raw score i ",i)
-                #print(self.soft_tf_idf[i].get_raw_score(x_normalize[i], y[i]))
                 if self.soft_tf_idf[i].get_raw_score(x_normalize[i], y[i]) < self.similarity_threshold:
                     inner_flag = False
                     break
@@ -90,7 +81,7 @@ class DataReduction:
             #print("------------------------")
             #kiem tra truong ngay thang neu data bi trung
             if inner_flag:
-                #flag = True
+                
                 check_date_posted = self.is_over_range(x_normalize[-2],y[-2],1)
                 check_valid_through = self.is_over_range(x_normalize[-1],y[-1],1)
                 #vananh kiem tra truong ngay thang neu trung thi return luon
@@ -100,7 +91,6 @@ class DataReduction:
                 else:
                     flag = True
                     break
-                
         return flag
     #tach tu tieng viet
     @staticmethod
@@ -148,7 +138,6 @@ class DataReduction:
         # Calc an array of tuple (y, prefix) of Y
         Y_prefix = []
         ids = []
-
         for i, y in enumerate(Y):
             flag_choose = True
             prefix = []
@@ -202,11 +191,38 @@ class DataReduction:
         return [Y[ids[i]] for i in Y_set_id]
 
     def is_over_range(self,from_date,to_date,range_month):
-        expire_date = from_date + relativedelta(months=range_month)
-        if to_date >= expire_date:
+        exact_from_date = from_date
+        exact_to_date = to_date
+        if from_date > to_date:
+            exact_from_date = to_date
+            exact_to_date = from_date 
+        expire_date = exact_from_date + relativedelta(months=1)
+        if exact_to_date >= expire_date:
             return True
         else:
             return False
+
+    #vananh
+    def add_job(self,filterd_job):
+        self.size = self.size + 1
+        y_split = []
+        for i in range(self.no_fields):
+            y_split.append(self.word_nomalize(self.word_split(filterd_job[i])))
+            self.Y_fields[i].append(y_split[i])
+            self.Y_index[i]=self.rebuild_invert_index(y_split[i],self.size-1,self.Y_index[i])
+            self.soft_tf_idf[i] = SoftTfIdf(self.Y_fields[i])
+        y_split.append(filterd_job[-2])
+        y_split.append(filterd_job[-1])
+        self.Y_normalize.append(y_split)
+        
+        
+
+    def rebuild_invert_index(self,word_list,data_index,ini_invert_index):
+        inverted = ini_invert_index
+        for word in word_list:
+            locations = inverted.setdefault(word, [])
+            locations.append(data_index)
+        return inverted
 
 
     @staticmethod

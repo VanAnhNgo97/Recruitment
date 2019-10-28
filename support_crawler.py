@@ -269,6 +269,8 @@ class SchemaCrawler(Spider):
         jobOpenings = 0
         if "totalJobOpenings" not in job:
             job_available_values = dom.xpath("//*[@id='left-content']//*[contains(text(),'Số lượng tuyển dụng')]/parent::*/text()")
+            if len(job_available_values) == 0:
+                job_available_values = dom.xpath("//div[@class='info-left']//*[contains(text(),'Số lượng cần tuyển')]/parent::*/text()")
             for value in job_available_values:
                 #print("value")
                 #print(value)
@@ -279,18 +281,6 @@ class SchemaCrawler(Spider):
                 elif temp != "" and "giới hạn" in temp:
                     job["totalJobOpenings"] = 10
                     jobOpenings = job["totalJobOpenings"]
-            if jobOpenings == 0:
-                job_available_values = dom.xpath("//div[@class='info-left']//*[contains(text(),'Số lượng cần tuyển')]/parent::*/text()")
-                for value in job_available_values:
-                    #print("value")
-                    #print(value)
-                    temp = value.strip()
-                    if temp != "" and temp.isdigit():
-                        job["totalJobOpenings"] = int(temp)
-                        jobOpenings = job["totalJobOpenings"]
-                    elif temp != "" and "giới hạn" in temp:
-                        job["totalJobOpenings"] = 10
-                        jobOpenings = job["totalJobOpenings"]
             if jobOpenings == 0:
                 job["totalJobOpenings"] = 2
         #print("timviecnhanh")
