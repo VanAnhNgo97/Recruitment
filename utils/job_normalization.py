@@ -77,6 +77,8 @@ def normalize_occupational_category(occupational_category):
 
 
 def normalize_address_region(address_region):
+    print("hahahah")
+    print(address_region)
     return ADDRESS_DICT.get(address_region.strip(), address_region)
 
 
@@ -94,6 +96,8 @@ def normalize_salary(salary_value):
         value_list = re.findall(r'\d+', salary_value)
         if len(value_list) > 0:
             res = int(value_list[-1]) * 1000000
+    print("normalize salary_value")
+    print(res)
     return res
 
 #vananh

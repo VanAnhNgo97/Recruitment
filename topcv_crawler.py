@@ -73,18 +73,18 @@ class Crawler(Spider):
     def parse(self, response):
         next_page = response.xpath(self.context['selectors']['next_page'] + '/@href').get()
         #job_urls = response.xpath(self.context['selectors']['job_url'] + '/@href').getall()
-        job_urls = []
+        #job_urls = []
         default_url = "https://www.topcv.vn/viec-lam/hn-money-lover-tuyen-ios-developer/"
         #max = 161477
         #loi 100001,130000
         #50015
         #loi 50015,60015 
-        #loi 105018,110018
-        for i in range(140028,150028):
+        
+        for i in range(10018,30018):
             job_url = default_url + str(i) + ".html"
             yield Request(url=get_correct_url(job_url, response), callback=self.parse_job)
-        
         '''
+        
         for job_url in job_urls:
             # job_url = response.urljoin(job_url)
             yield Request(url=get_correct_url(job_url, response), callback=self.parse_job)
