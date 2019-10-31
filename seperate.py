@@ -64,8 +64,6 @@ def get_start_index_tvn(raw_text,title):
 	return title_position.start()
 
 def get_end_index_tvn(raw_text,title):
-	print("---------------------------")
-
 	title_position = ""
 	if title == 'lương':
 		title_position = re.search(r'(mức lương:)', raw_text)
@@ -129,6 +127,12 @@ def extract_salary_tvn(raw_text):
 		else:
 			baseSalary["minValue"] = 0
 			baseSalary["maxValue"] = 0
+	if baseSalary["minValue"] < 100:
+		baseSalary["minValue"] = baseSalary["minValue"] * 1000000
+	if baseSalary["maxValue"] < 100:
+		baseSalary["maxValue"] = baseSalary["maxValue"] * 1000000
+	baseSalary["minValue"] = str(baseSalary["minValue"])
+	baseSalary["maxValue"] = str(baseSalary["maxValue"])
 	baseSalary["currency"] = "VND"
 	baseSalary["unitText"] = "MONTH"
 	return baseSalary

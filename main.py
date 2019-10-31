@@ -8,7 +8,7 @@ from support_crawler import SchemaCrawler, XpathCrawler
 from utils.model import NaiveBayesModel, DecisionTreeModel, LogisticRegressionModel
 from utils.preprocess import FeaturesTransformer
 from setting import SCRAPY_CONFIG, get_domain, WEB_LIST
-from topcv_crawler import Crawler
+from timviecnhanh_crawler import Crawler
 
 @defer.inlineCallbacks
 def crawl():

@@ -40,10 +40,14 @@ class Crawler(Spider):
         'MONGO_URI': MONGO_URI,
         'MONGO_DATABASE': MONGO_DATABASE,
         'MONGO_COLLECTION': MONGO_COLLECTION,
-        'User-Agent': 'whatever'
+        'USER_AGENT' : "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:38.0) Gecko/20100101 Firefox/38.0",
+        'HTTPERROR_ALLOW_ALL' : True,
+        'COOKIES_ENABLED' : False,
+        
+        
         
     }
-    handle_httpstatus_list = [404,410,200] 
+    handle_httpstatus_list = [404,410] 
     def __init__(self, name=None, **kwargs):
         self.domain = kwargs.get('domain')
         Crawler.currentDomain = self.domain
@@ -58,7 +62,6 @@ class Crawler(Spider):
                 raise Exception('Context file is not completed')
             else:
                 if self.context['data_format'] == 'json+ld':
-                    print("json+ld")
                     self.parse_job = self.parse_job_json
                 else:
                     self.parse_job = self.parse_job_microdata
@@ -78,12 +81,12 @@ class Crawler(Spider):
         #job_urls = response.xpath(self.context['selectors']['job_url'] + '/@href').getall()
         job_urls = []
         default_url = "https://www.timviecnhanh.com/tuyen-nhan-vien-phuc-vu-nha-hang-part-time-ho-chi-minh-"
-        print("hheehe")#4302939
-        for i in range(4416977,4416978):
-            job_url = 'https://www.timviecnhanh.com/tuyen-ke-toan-tong-hop-ho-chi-minh-4415609.html'
-            print(job_url)
-            headers = {'User-Agent': 'whatever'}
-            yield Request(url=get_correct_url(job_url, response), callback=self.parse_job,headers=headers,errback=self.error_parse)
+        #loi 3041291
+        for i in range(3031291,3041291):
+            job_url = "https://www.timviecnhanh.com/tuyen-ke-toan-tong-hop-ho-chi-minh-" + str(i) + ".html"
+            #job_url = 'https://www.timviecnhanh.com/tuyen-nu-nhan-vien-goi-dau-luong-cao-3031521.html'
+            #headers = {'User-Agent': 'whatever'}
+            yield Request(url=get_correct_url(job_url, response), callback=self.parse_job,errback=self.error_parse)
         
         '''
         for job_url in job_urls:
@@ -95,13 +98,13 @@ class Crawler(Spider):
             yield Request(url=get_correct_url(next_page, response), callback=self.parse)
         '''
     def error_parse(self, response):
-        print(response)
+        print(response.status)
         print("errrrrr")
 
     def parse_job_json(self, response):
-        print("vananh-------")
-        print(response.status)
         job_url = response.request.url
+        error_log = response.request.url + '-----' + str(response.status) + '\n'
+        self.logger.error(error_log)
         jobs = self.get_json_from_response_json(response)
         job_selectors = self.context['selectors']['job_selectors']
         for job in jobs:
@@ -109,11 +112,10 @@ class Crawler(Spider):
             if "industry" not in job:
                 print("not in")
                 job["url"] = job_url
-                return self.get_from_neighbor(response,job)
-            #print(job)
+                yield self.get_from_neighbor(response,job)
+                continue
             language = job["language"]
             job = self.change_to_right_form(job)
-            print(job)
             if job_selectors is not None:
                 for field, selector in job_selectors.items():
                     print(selector)
@@ -122,8 +124,7 @@ class Crawler(Spider):
                 job = self.normalize(job, job_url)
                 if job is not None:
                     job["language"] = language
-                    print("not none job")
-                    #yield job
+                    yield job
             
                 
 
@@ -139,7 +140,6 @@ class Crawler(Spider):
                     job[field] = ','.join(
                         text.strip() for text in response.xpath(selector + '/text()').extract() if text is not None)
                 job = self.normalize(job, job_url)
-                print(job_url)
                 yield job
 
     @staticmethod
@@ -153,10 +153,11 @@ class Crawler(Spider):
         '''
         #
         dom = etree.HTML(response.body.decode("utf8"))
-        print("okkkkk laallalala")
+        #print("-------raw------------")
+        #print(dom.xpath("//title/text()"),'-------',response.url,'-----',response.status)
+        #print("---------------------")
         #for timviecnhanh
         raw_title = dom.xpath("//title/text()")[0]
-        print(raw_title)
         if raw_title.lower() == "error":
             Crawler.home = Crawler.home + 1
             return result
@@ -171,28 +172,27 @@ class Crawler(Spider):
                     extract_job = job
                     vi_lang = Crawler.is_vi_language(job['description'])
                     if not vi_lang:
+                        job["language"] = "en"
+                        temp_job = job
                         if Crawler.currentDomain == "topcv":
-                            temp_job = job
                             print(response.url)
                             job = Crawler.seperate_attributes_topcv(temp_job,dom,False)
                             Crawler.no_not_vi_doc = Crawler.no_not_vi_doc + 1
                             result.append(job)
                             return result
                         elif Crawler.currentDomain == "timviecnhanh":
-                            temp_job = job
                             print(response.url)
                             job = Crawler.extract_job_openings_tvn(temp_job,dom,False)
                             Crawler.no_not_vi_doc = Crawler.no_not_vi_doc + 1
                             result.append(job)
                             return result
                     else:
+                        job["language"] = "vi"
+                        temp_job = job
                         if Crawler.currentDomain == "topcv":
-                            temp_job = job
                             print(response.url)
                             job = Crawler.seperate_attributes_topcv(temp_job,dom)
                         elif Crawler.currentDomain == "timviecnhanh":
-                            temp_job = job
-                            print("tvn")
                             print(response.url)
                             job = Crawler.extract_job_openings_tvn(temp_job,dom)
 
@@ -202,6 +202,7 @@ class Crawler(Spider):
                 pass
         if extract_job is None:
             if Crawler.currentDomain == "timviecnhanh":
+                print(response.url)
                 job = Crawler.seperate_attributes_timviecnhanh(dom)
                 if job is not None:
                     result.append(job)
@@ -486,21 +487,24 @@ class Crawler(Spider):
         return True
 
     def get_from_neighbor(self, response,ini_job):
+        #print("-----neighbor_job----")
         dom = etree.HTML(response.body.decode("utf8"))
         neighbor_urls = dom.xpath("//*[@id='job-hot-content']//tr[1]//a[1]")
+        if len(neighbor_urls) == 0:
+            neighbor_urls = dom.xpath("//*[@id='job-week-content']//tr[1]//a[1]")
         result = []
         for neighbor_url in neighbor_urls:
             url = neighbor_url.attrib["href"]
-            print(url)
             neighbor_request = Request(url=get_correct_url(url, response),callback=self.get_job_from_neighbor, encoding='utf8')
             neighbor_request.cb_kwargs["ini_job"] = ini_job
+            #print("-----ok-----")
             return neighbor_request
             
     def get_job_from_neighbor(self,response,ini_job):
         print("xxxxxxxxxxxxxxxxxxx")
-        print("xxxxxxxxxxxxxxxxxxxxxxxx")
         neighbor_jobs = self.get_json_from_response_json(response)
         for neighbor_job in neighbor_jobs:
+            print("neighbor_job")
             ini_job["industry"] = neighbor_job["industry"]
         job_selectors = self.context['selectors']['job_selectors']
         job = ini_job
@@ -509,14 +513,11 @@ class Crawler(Spider):
         job = self.change_to_right_form(job)
         if job_selectors is not None:
             for field, selector in job_selectors.items():
-                print(selector)
                 job[field] = ','.join(
                     text.strip() for text in response.xpath(selector + '/text()').extract() if text is not None)
             job = self.normalize(job, job_url)
             if job is not None:
                 job["language"] = language
-                print('job co ................')
-                print(job)
                 yield job
 
     def close(self, spider, reason):

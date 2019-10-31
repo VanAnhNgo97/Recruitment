@@ -68,7 +68,6 @@ def normalize_occupational_category(occupational_category):
             career_normalized = CAREER_CODE_DICT.get(career_tmp)
             if career_normalized is not None:
                 normalized_occupational_category.append(int(career_normalized))
-
     if len(normalized_occupational_category) == 0:
         #vananh
         #normalized_occupational_category.append('Khác')
@@ -77,8 +76,6 @@ def normalize_occupational_category(occupational_category):
 
 
 def normalize_address_region(address_region):
-    print("hahahah")
-    print(address_region)
     return ADDRESS_DICT.get(address_region.strip(), address_region)
 
 
@@ -96,8 +93,8 @@ def normalize_salary(salary_value):
         value_list = re.findall(r'\d+', salary_value)
         if len(value_list) > 0:
             res = int(value_list[-1]) * 1000000
-    print("normalize salary_value")
-    print(res)
+    #print("normalize salary_value")
+    #print(res)
     return res
 
 #vananh
