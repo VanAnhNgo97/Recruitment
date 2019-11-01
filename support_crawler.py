@@ -376,5 +376,4 @@ class XpathCrawler(Spider):
         for node in tree.iter():
             if node.text is not None:
                 data.append([node.getroottree().getpath(node), node.text])
-
         return data

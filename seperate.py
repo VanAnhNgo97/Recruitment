@@ -137,6 +137,13 @@ def extract_salary_tvn(raw_text):
 	baseSalary["unitText"] = "MONTH"
 	return baseSalary
 
+def normalize_date_tvn(ini_date):
+	words_list = ini_date.split("-")
+	date_str = words_list[1] + "-" + words_list[0] + "-" + words_list[2]
+	return date_str
+	
+
+
 
 
 
