@@ -35,7 +35,7 @@ class JobUitl(object):
 		self.category_list = [0]
 		self.database = pymongo.MongoClient(MONGO_URI)[MONGO_DATABASE]
 		#self.collection = pymongo.MongoClient(MONGO_URI)[MONGO_DATABASE][self.TEMP_MONGO_COLLECTION]
-		self.collection = self.database["topcv_real"]
+		self.collection = self.database["topcv_2"]
 		
 		for k,v in CAREER_CODE_DICT.items():
 			self.category_list.append(int(v))
@@ -68,7 +68,7 @@ class JobUitl(object):
 			for category in self.category_list:
 				amount = 0
 				jobs = self.collection.find({
-						'occupationalCategory' : 8,
+						'occupationalCategory' : category,
 						'datePosted' :{
 							'$lt' : to_date,
 							'$gte' : from_date
@@ -141,13 +141,13 @@ class JobUitl(object):
 		monthly_jobs_amount = collection.find({
 			'category' : category
 			},{'day' : 1, 'amount' : 1, '_id' : 0})
-		print(monthly_jobs_amount[0])
+		#print(monthly_jobs_amount[0])
 		return monthly_jobs_amount
 
 
 job_util = JobUitl()
-posted_date = job_util.get_first_job()
-print(posted_date)
+#posted_date = job_util.get_first_job()
+#print(posted_date)
 '''
 print(len(job_util.category_list))
 for i in job_util.category_list:
@@ -156,7 +156,7 @@ for i in job_util.category_list:
 #job_util.statistic_by_category()
 #job_util.update_job_statistic()
 amount_list = job_util.statistic_category(8)
-
+pd.DataFrame(amount_list).to_csv("test.csv")
 
 
 

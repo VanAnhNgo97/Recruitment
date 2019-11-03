@@ -141,6 +141,22 @@ def normalize_date_tvn(ini_date):
 	words_list = ini_date.split("-")
 	date_str = words_list[1] + "-" + words_list[0] + "-" + words_list[2]
 	return date_str
+
+def normalize_org_name_tvn(ini_name):
+	if ini_name[-1] == "!":
+		ini_name = ini_name[:-1]
+	ini_name = ini_name.lower()
+	ini_name = ini_name.replace("công ty","c_t")
+	count = 0
+	for word in ini_name:
+		if word == 'c_t':
+			count = count + 1
+	if count == 1:
+		ini_name = ini_name.replace("c_t","công ty")
+	else:
+		ini_name = ini_name.replace("c_t","",1)
+		ini_name = ini_name.replace("c_t","công ty")
+	return ini_name
 	
 
 

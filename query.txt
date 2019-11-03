@@ -12,4 +12,12 @@ db.topcv_real.find({'occupationalCategory' : 8,
 })
    .projection({})
    .sort({_id:-1})
+//chay ok
+db.timviecnhanh.find({}).forEach(function(e){
+    var ini_name = e.hiringOrganization.name;
+    ini_name = ini_name.replace("!","")
+    ini_name = ini_name.replace("công ty","");
+    e.hiringOrganization.name = ini_name;
+    db.timviecnhanh.save(e)
+})
    

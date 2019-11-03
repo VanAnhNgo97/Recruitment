@@ -82,7 +82,7 @@ class Crawler(Spider):
         job_urls = []
         default_url = "https://www.timviecnhanh.com/tuyen-nhan-vien-phuc-vu-nha-hang-part-time-ho-chi-minh-"
         #loi --3041261
-        for i in range(3081261,3091261):
+        for i in range(3151261,3161261):
             job_url = "https://www.timviecnhanh.com/tuyen-ke-toan-tong-hop-ho-chi-minh-" + str(i) + ".html"
             #job_url = 'https://www.timviecnhanh.com/tuyen-ke-toan-van-phong-3084598.html'
             #headers = {'User-Agent': 'whatever'}
@@ -464,6 +464,7 @@ class Crawler(Spider):
         job["validThrough"] = seperate.normalize_date_tvn(job["validThrough"])
         job["hiringOrganization"] = {}
         job["hiringOrganization"]["name"] = seperate.extract_info_tvn(job["description"],"công ty")
+        job["hiringOrganization"]["name"] = seperate.normalize_org_name_tvn(job["hiringOrganization"]["name"])
         raw_salary = seperate.extract_info_tvn(job["description"],"lương")
         job["baseSalary"] =  {}
         job["baseSalary"] = seperate.extract_salary_tvn(raw_salary)
