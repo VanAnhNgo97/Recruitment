@@ -20,4 +20,26 @@ db.timviecnhanh.find({}).forEach(function(e){
     e.hiringOrganization.name = ini_name;
     db.timviecnhanh.save(e)
 })
+//chay ok
+db.timviecnhanh.find({
+   'datePosted':{
+        $gt: ISODate("2019-10-20T07:00:00+07:00")
+    }
+}).forEach(function(e){
+    e.datePosted.setFullYear(2017);
+    e.validThrough = new Date(e.datePosted.getTime() + 60*1*24*60*60000);
+    db.timviecnhanh.save(e);
+});
+//
+db.MonthlyCategoryStatistic.aggregate([
+    {
+        $group: {
+            _id : '$category',
+            total : {$sum : '$amount'}
+        }
+    },
+    {
+        $sort: {'total' : -1}
+    }
+]).limit(11)
    

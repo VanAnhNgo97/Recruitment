@@ -35,8 +35,7 @@ class JobUitl(object):
 		self.category_list = [0]
 		self.database = pymongo.MongoClient(MONGO_URI)[MONGO_DATABASE]
 		#self.collection = pymongo.MongoClient(MONGO_URI)[MONGO_DATABASE][self.TEMP_MONGO_COLLECTION]
-		self.collection = self.database["topcv_2"]
-		
+		self.collection = self.database["topcv_2"]	
 		for k,v in CAREER_CODE_DICT.items():
 			self.category_list.append(int(v))
 		
@@ -116,7 +115,7 @@ class JobUitl(object):
 		return jobs[0]['datePosted']
 
 	def save_doc(self,statistic_doc):
-		collection = self.database["MonthlyCategoryStatistic"]
+		collection = self.database["TVN_MonthlyCategoryStatistic"]
 		data = statistic_doc.__dict__
 		collection.insert_one(data)
 
@@ -130,6 +129,7 @@ class JobUitl(object):
 		return statisctic_doc["amount"]
 
 	def update_job_statistic(self):
+		self.collection = self.database["topcv_2"]
 		collection = self.database["MonthlyCategoryStatistic"]
 		collection.drop()
 		new_collection = self.database["MonthlyCategoryStatistic"]
@@ -137,12 +137,59 @@ class JobUitl(object):
 		#statisctic_doc = JobStatistic(8,2019,8,0)
 		#self.save_doc(statisctic_doc)
 	def statistic_category(self,category):
-		collection = self.database["MonthlyCategoryStatistic"]
+		collection = self.database["TVN_MonthlyCategoryStatistic"]
 		monthly_jobs_amount = collection.find({
 			'category' : category
-			},{'day' : 1, 'amount' : 1, '_id' : 0})
+			},{'day' : 1, 'amount' : 1, '_id' : 0}).sort([('day', -1)])
 		#print(monthly_jobs_amount[0])
 		return monthly_jobs_amount
+	def update_job_statistic_tvn(self):
+		self.collection = self.database["timviecnhanh"]
+		collection = self.database["TVN_MonthlyCategoryStatistic"]
+		collection.drop()
+		new_collection = self.database["TVN_MonthlyCategoryStatistic"]
+		self.statistic_by_category()
+	def statistic_job(self,domain):
+		self.collection = self.database[domain]
+		collection_name = 'MonthlyStatistic_' + domain
+		collection = self.database[collection_name]
+		collection.drop()
+		new_collection = self.database[collection_name]
+		today = datetime.today()
+		print(today)
+		from_date = self.get_first_job()
+		start_year = from_date.year
+		start_month = from_date.month
+		day_str = str(start_year) + "-" + str(start_month) + "-" + str(1)
+		ini_day = pd.to_datetime(day_str)
+		from_date = ini_day
+		while(from_date < today):
+			to_date = from_date + relativedelta(months=1)
+			amount = 0
+			jobs = self.collection.find({
+					'datePosted' :{
+						'$lt' : to_date,
+						'$gte' : from_date
+					}
+			})
+			for job in jobs:
+				amount = amount + job['totalJobOpenings']
+			
+			current_year = from_date.year
+			current_month = from_date.month
+			category = 'all'
+			statisctic_doc = JobStatistic(category,current_year,current_month,amount)
+			#save doc
+			data = statisctic_doc.__dict__
+			collection.insert_one(data)
+			from_date = to_date
+	def get_monthly_statistic(self,domain):
+		collection_name = 'MonthlyStatistic_' + domain
+		collection = self.database[collection_name]
+		data = collection.find({},{'_id' : 0,'category' : 0,}).sort([('day', -1)])
+		return data
+
+
 
 
 job_util = JobUitl()
@@ -155,8 +202,22 @@ for i in job_util.category_list:
 '''
 #job_util.statistic_by_category()
 #job_util.update_job_statistic()
-amount_list = job_util.statistic_category(8)
-pd.DataFrame(amount_list).to_csv("test.csv")
+#amount_list = job_util.statistic_category(8)
+#pd.DataFrame(amount_list).to_csv("test.csv")
+#timviecnhanh
+#job_util.update_job_statistic_tvn()
+#statisctic topcv - timviecnhanh by monthly
+#job_util.statistic_job("timviecnhanh")
+print("ok")
+#data = job_util.get_monthly_statistic("timviecnhanh")
+#pd.DataFrame(data).to_csv("timviecnhanh.csv")
+#top 10
+id_list = [35,14,21,8,6,50,33,27,42,5]
+for job_id in id_list:
+	amount_list = job_util.statistic_category(job_id)
+	file_name = "thongke_nganh" + str(job_id) + ".csv"
+	pd.DataFrame(amount_list).to_csv(file_name)
+
 
 
 

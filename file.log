@@ -1,0 +1,37 @@
+2019-11-06 23:15:10 [scrapy.core.scraper] ERROR: Spider error processing <GET https://www.timviecnhanh.com/tuyen-nhan-vien-thanh-tra-%E2%80%93-giam-sat-dich-vu-taxi-3155690.html> (referer: https://www.timviecnhanh.com/vieclam/timkiem?tu_khoa=&nganh_nghe%5B%5D=&tinh_thanh%5B%5D=)
+Traceback (most recent call last):
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/utils/defer.py", line 102, in iter_errback
+    yield next(it)
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/offsite.py", line 29, in process_spider_output
+    for x in result:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/referer.py", line 339, in <genexpr>
+    return (_set_referer(r) for r in result or ())
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/urllength.py", line 37, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/core/spidermw.py", line 84, in evaluate_iterable
+    for r in iterable:
+  File "/home/vananh/.local/lib/python3.6/site-packages/scrapy/spidermiddlewares/depth.py", line 58, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/home/vananh/VanAnh/DoAn/Recruitment/timviecnhanh_crawler.py", line 112, in parse_job_json
+    jobs = self.get_json_from_response_json(response)
+  File "/home/vananh/VanAnh/DoAn/Recruitment/timviecnhanh_crawler.py", line 230, in get_json_from_response_json
+    job = Crawler.seperate_attributes_timviecnhanh(dom)
+  File "/home/vananh/VanAnh/DoAn/Recruitment/timviecnhanh_crawler.py", line 456, in seperate_attributes_timviecnhanh
+    vi_lang = Crawler.is_vi_language(job['description'])
+  File "/home/vananh/VanAnh/DoAn/Recruitment/timviecnhanh_crawler.py", line 521, in is_vi_language
+    result = detect(text)
+  File "/home/vananh/.local/lib/python3.6/site-packages/langdetect/detector_factory.py", line 130, in detect
+    return detector.detect()
+  File "/home/vananh/.local/lib/python3.6/site-packages/langdetect/detector.py", line 136, in detect
+    probabilities = self.get_probabilities()
+  File "/home/vananh/.local/lib/python3.6/site-packages/langdetect/detector.py", line 143, in get_probabilities
+    self._detect_block()
+  File "/home/vananh/.local/lib/python3.6/site-packages/langdetect/detector.py", line 150, in _detect_block
+    raise LangDetectException(ErrorCode.CantDetectError, 'No features in text.')
+langdetect.lang_detect_exception.LangDetectException: No features in text.

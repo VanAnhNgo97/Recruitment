@@ -46,15 +46,15 @@ def create_dataset(dataset, look_back=1):
 		dataY.append(dataset[i + look_back, 0])
 	return np.array(dataX), np.array(dataY)
 #reshape into X=t, Y=t+1
-look_back = 1
+look_back = 5
 trainX, trainY = create_dataset(train,look_back)# trainX=[[],[]] - trainY=[]
 testX, testY = create_dataset(test,look_back)
 #reshape input to be [samples, time steps, features]
-trainX = np.reshape(trainX,(trainX.shape[0],1,trainX.shape[1])) #trainX = [[[],[]],[[],[]]]
-testX = np.reshape(testX,(testX.shape[0],1,testX.shape[1]))#testX = [[[],[]],[[],[]]]
+trainX = np.reshape(trainX,(trainX.shape[0],trainX.shape[1],1)) 
+testX = np.reshape(testX,(testX.shape[0],testX.shape[1],1))
 #create and fit the LSTM network
 model = Sequential()
-model.add(LSTM(4,input_shape=(1,look_back)))
+model.add(LSTM(4,input_shape=(look_back,1)))
 model.add(Dense(1))
 #gd
 sgd = optimizers.SGD(lr=0.05)

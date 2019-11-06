@@ -11,7 +11,7 @@ MAX_NO_SAMPLES = 20 #ban dau = 20
 
 MONGO_URI = 'mongodb://localhost:27017/'
 MONGO_DATABASE = 'recruitment_1910'
-MONGO_COLLECTION = 'timviecnhanh' #topcv2/timviecnhanh
+MONGO_COLLECTION = 'timviecnhanh_2' #topcv2/timviecnhanh
 
 
 SCRAPY_CONFIG = {
@@ -106,10 +106,10 @@ def get_domain(url):
             domain = 'default'
     return domain
 WEB_LIST = {
-    "topcv": {
-        "start_url": "https://www.topcv.vn/viec-lam/moi-nhat.html?utm_source=click-search-job&utm_medium=page-job&utm_campaign=tracking-job",
-        "next_page": "//*[@id='box-job-result']/div[2]/ul/li[last()]/a",
-        "job_url": "//*[@id='box-job-result']/div[1]/div/div/div[2]/h4/a"
+    "timviecnhanh": {
+        "start_url": "https://www.timviecnhanh.com/vieclam/timkiem?tu_khoa=&nganh_nghe%5B%5D=&tinh_thanh%5B%5D=",
+        "next_page": "/html/body/section/div/div[1]/div/div/article[1]/table/tfoot/tr/td/div/a[last()]",
+        "job_url": "/html/body/section/div/div/div/div/article[1]/table/tbody/tr/td[1]/a[1]"
     },
 }
 '''

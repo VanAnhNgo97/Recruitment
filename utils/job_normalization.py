@@ -36,7 +36,7 @@ def normalize_job(job):
     if job['datePosted'] != "":
         job['datePosted'] = normalize_date(job['datePosted'])
     else:
-        job['datePosted'] = job['validThrough'] - relativedelta(months=1)
+        job['datePosted'] = job['validThrough'] - relativedelta(months=2)
     
     job['validThrough'] = normalize_date_range(job['datePosted'],job['validThrough'])
     if job['baseSalary']['maxValue'] == 0:

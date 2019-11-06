@@ -81,8 +81,13 @@ class Crawler(Spider):
         #job_urls = response.xpath(self.context['selectors']['job_url'] + '/@href').getall()
         job_urls = []
         default_url = "https://www.timviecnhanh.com/tuyen-nhan-vien-phuc-vu-nha-hang-part-time-ho-chi-minh-"
-        #loi --3041261
-        for i in range(3151261,3161261):
+        #loi --3041261 3021301 3021261
+        #3191261 chua
+        #nham 3891261,3991261 3907733
+        #3891261-3901261 ok
+        #nham 3491261,3591261 chua - 3562917 ok
+        '''
+        for i in range(3161261,3171261):
             job_url = "https://www.timviecnhanh.com/tuyen-ke-toan-tong-hop-ho-chi-minh-" + str(i) + ".html"
             #job_url = 'https://www.timviecnhanh.com/tuyen-ke-toan-van-phong-3084598.html'
             #headers = {'User-Agent': 'whatever'}
@@ -96,15 +101,15 @@ class Crawler(Spider):
         if next_page is not None:
             next_page = response.urljoin(next_page)
             yield Request(url=get_correct_url(next_page, response), callback=self.parse)
-        '''
+        
     def error_parse(self, response):
         print(response.status)
         print("errrrrr")
 
     def parse_job_json(self, response):
         job_url = response.request.url
-        error_log = response.request.url + '-----' + str(response.status) + '\n'
-        self.logger.error(error_log)
+        #error_log = response.request.url + '-----' + str(response.status) + '\n'
+        #self.logger.error(error_log)
         jobs = self.get_json_from_response_json(response)
         job_selectors = self.context['selectors']['job_selectors']
         for job in jobs:
@@ -472,8 +477,15 @@ class Crawler(Spider):
         job["jobLocation"] = {
             "address" : {}
         }
-        job["jobLocation"]["address"]["addressLocality"] = "Việt Nam"
-        job["jobLocation"]["address"]["streetAddress"] = "Việt Nam"
+        #location 
+        raw_location = dom.xpath("//div[@class='bottom-article']//a[contains(text(), 'Việc làm')]/text()")
+        city = raw_location[0].strip()
+        city = city.replace('Việc làm','')
+        city = city.strip()
+        if city == "":
+            city = "Việt Nam"
+        job["jobLocation"]["address"]["addressLocality"] = city
+        job["jobLocation"]["address"]["streetAddress"] = city
         job["jobLocation"]["address"]["addressCountry"] = "Việt Nam"
         category = dom.xpath("//div[@class='line-full breadcrumb-line']//ol/li[4]//a/text()")
         job["industry"] = category[0]
@@ -499,6 +511,7 @@ class Crawler(Spider):
                     jobOpenings = job["totalJobOpenings"]
             if jobOpenings == 0:
                 job["totalJobOpenings"] = 2
+        
         return job
 
     @staticmethod
