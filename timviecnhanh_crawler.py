@@ -78,16 +78,16 @@ class Crawler(Spider):
 
     def parse(self, response):
         next_page = response.xpath(self.context['selectors']['next_page'] + '/@href').get()
-        #job_urls = response.xpath(self.context['selectors']['job_url'] + '/@href').getall()
-        job_urls = []
+        job_urls = response.xpath(self.context['selectors']['job_url'] + '/@href').getall()
+        #job_urls = []
         default_url = "https://www.timviecnhanh.com/tuyen-nhan-vien-phuc-vu-nha-hang-part-time-ho-chi-minh-"
         #loi --3041261 3021301 3021261
         #3191261 chua
         #nham 3891261,3991261 3907733
         #3891261-3901261 ok
         #nham 3491261,3591261 chua - 3562917 ok
-        '''
-        for i in range(3161261,3171261):
+        
+        for i in range(3271261,3281261):
             job_url = "https://www.timviecnhanh.com/tuyen-ke-toan-tong-hop-ho-chi-minh-" + str(i) + ".html"
             #job_url = 'https://www.timviecnhanh.com/tuyen-ke-toan-van-phong-3084598.html'
             #headers = {'User-Agent': 'whatever'}
@@ -101,7 +101,7 @@ class Crawler(Spider):
         if next_page is not None:
             next_page = response.urljoin(next_page)
             yield Request(url=get_correct_url(next_page, response), callback=self.parse)
-        
+        '''
     def error_parse(self, response):
         print(response.status)
         print("errrrrr")
